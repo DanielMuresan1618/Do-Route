@@ -44,6 +44,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun updateUI(account: GoogleSignInAccount?) {
         if (account==null) return
+        val intent = Intent(this,Child)
     }
 
     fun onClick(v: View) { //centralized onClick
