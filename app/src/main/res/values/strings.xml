@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Web Sentinel</string>
+    <string name="title_child_module">Child Module</string>
+    <string name="title_parent_module">Parent Module</string>
 </resources>

@@ -1,2 +1,2 @@
-include ':app'
+include ':app', ':child_module', ':parent_module'
 rootProject.name='Web Sentinel'
