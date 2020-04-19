@@ -1,12 +1,9 @@
 package com.example.websentinel
-
-
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.FragmentActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -15,8 +12,7 @@ import com.google.android.gms.common.SignInButton
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
 
-class MainActivity : AppCompatActivity() {
-
+class InitialActivity : AppCompatActivity() {
     private lateinit var mGoogleSignInClient: GoogleSignInClient
     private lateinit var signInButton:SignInButton
 
@@ -34,8 +30,6 @@ class MainActivity : AppCompatActivity() {
         signInButton.setOnClickListener{ onClick(signInButton)}
     }
 
-
-
     override fun onStart() {
         super.onStart()
         val account = GoogleSignIn.getLastSignedInAccount(this)
@@ -44,7 +38,15 @@ class MainActivity : AppCompatActivity() {
 
     private fun updateUI(account: GoogleSignInAccount?) {
         if (account==null) return
-        val intent = Intent(this,Child)
+        //TODO returneaza ceva eroare ca nu s-a putut conecta
+
+        when(account.id){//skipped when for now
+            //TODO cauta in DB dupa ID daca e copil
+            //TODO cauta in DB dupa ID daca e adult
+        }
+
+        val intent = Intent(this,LoginChildActivity::class.java)
+        startActivity(intent)
     }
 
     fun onClick(v: View) { //centralized onClick
@@ -76,13 +78,13 @@ class MainActivity : AppCompatActivity() {
             updateUI(account)
         } catch (e: ApiException) { // The ApiException status code indicates the detailed failure reason.
             // Please refer to the GoogleSignInStatusCodes class reference for more information.
-            Log.w(MainActivity.TAG, "signInResult:failed code=" + e.statusCode)
+            Log.w(TAG, "signInResult:failed code=" + e.statusCode)
             updateUI(null)
         }
     }
 
     companion object{
-        private val RC_SIGN_IN = 100
-        private val TAG = "MainActivity"
+        private const val RC_SIGN_IN = 100
+        private const val TAG = "InitialActivity"
     }
 }
