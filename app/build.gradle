@@ -27,6 +27,8 @@ android {
 dependencies {
     //self generated dependencies
     api 'com.google.android.material:material:1.1.0'
+    implementation 'com.karumi:dexter:6.1.0'
+    implementation 'com.google.android.libraries.places:places:2.2.0'
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     api 'androidx.appcompat:appcompat:1.1.0'
@@ -39,4 +41,11 @@ dependencies {
     //manually added dependencies
     api 'com.google.android.gms:play-services-auth:18.0.0'
     api "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation 'com.google.android.gms:play-services-maps:17.0.0'
+    implementation 'androidx.fragment:fragment-ktx:1.2.4'
+    implementation 'com.google.android.gms:play-services-location:17.0.0'
+    implementation 'com.github.mancj:MaterialSearchBar:0.8.1'
+    implementation 'com.google.android.libraries.places:places:2.2.0'
+    implementation 'com.skyfishjy.ripplebackground:library:1.0.1'
+    implementation 'com.karumi:dexter:6.1.0'
 }
