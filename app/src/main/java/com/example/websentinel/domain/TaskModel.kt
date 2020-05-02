@@ -1,14 +1,14 @@
-package com.example.websentinel
+package com.example.websentinel.domain
 
-import android.location.Location
 import java.util.*
 
 data class TaskModel (
+    var id: UUID,
     var title: String,
-    var description: String,
     var dateCreated: Date,
-    var dueDate: Date,
+    var description: String,
     var location: String,
+    var dueDate: Date,
     var status: String
 ) {
     override fun toString(): String {
