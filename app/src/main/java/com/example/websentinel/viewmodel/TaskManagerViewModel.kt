@@ -17,7 +17,7 @@ class TaskManagerViewModel(private val taskRepository: TaskRepository) : ViewMod
     }
 
     fun addTask(title: String, dueDate: Date, description: String, location:String, status:String) {
-        taskRepository.addTask(TaskModel(randomUUID(), title, Calendar.getInstance().time, description,location,dueDate,status))
+        taskRepository.addTask(TaskModel(randomUUID().toString(), title, Calendar.getInstance().time, description,location,dueDate,status))
         retrieveTasks()
     }
 

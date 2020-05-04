@@ -1,98 +1,125 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    app:cardElevation="10dp"
     app:cardCornerRadius="2dp"
-    app:cardPreventCornerOverlap="false"
-    >
+    app:cardElevation="10dp"
+    app:cardPreventCornerOverlap="false">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_constraintVertical_chainStyle="spread">
+        android:layout_height="match_parent">
 
-        <EditText
-            android:id="@+id/task_title"
-            android:layout_width="342dp"
-            android:layout_height="49dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="24dp"
-            android:ems="10"
-            android:inputType="textPersonName"
-            android:text="Task Title"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/task_date_created"
-            android:layout_width="100dp"
-            android:layout_height="18dp"
-            android:layout_marginTop="8dp"
-            android:text="Date Created"
-            app:layout_constraintBottom_toBottomOf="@+id/task_title"
-            app:layout_constraintEnd_toEndOf="@+id/task_title"
-            app:layout_constraintTop_toTopOf="@+id/task_title"
-            app:layout_constraintVertical_bias="0.09" />
-
-        <EditText
-            android:id="@+id/task_description"
-            android:layout_width="281dp"
-            android:layout_height="78dp"
-            android:layout_marginStart="8dp"
-            android:ems="10"
-            android:inputType="textPersonName"
-            android:text="Task Description"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/task_location" />
-
-        <EditText
-            android:id="@+id/task_due_date"
-            android:layout_width="63dp"
-            android:layout_height="34dp"
-            android:ems="10"
-            android:inputType="date"
-            android:text="02/05/2020"
-            android:textSize="10sp"
-            app:layout_constraintStart_toEndOf="@+id/task_description"
-            app:layout_constraintTop_toBottomOf="@+id/task_location" />
-
-        <TextView
-            android:id="@+id/task_location"
-            android:layout_width="342dp"
-            android:layout_height="21dp"
-            android:layout_marginStart="8dp"
-            android:text="Location"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/upper_group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toTopOf="@+id/lower_group"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/task_title" />
+            app:layout_constraintTop_toTopOf="parent">
 
-        <ImageButton
-            android:id="@+id/task_delete"
-            android:layout_width="38dp"
-            android:layout_height="36dp"
-            android:layout_marginEnd="8dp"
+            <EditText
+                android:id="@+id/task_title"
+                android:layout_width="0dp"
+                android:layout_height="42dp"
+                android:layout_marginTop="1dp"
+                android:ems="10"
+                android:inputType="textPersonName"
+                android:text="Task Title"
+                app:layout_constraintEnd_toStartOf="@+id/task_delete"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/task_date_created"
+                android:layout_width="100dp"
+                android:layout_height="18dp"
+                android:text="Date Created"
+                app:layout_constraintBottom_toBottomOf="@+id/task_title"
+                app:layout_constraintEnd_toEndOf="@+id/task_title"
+                app:layout_constraintTop_toTopOf="@+id/task_title" />
+
+            <TextView
+                android:id="@+id/task_location"
+                android:layout_width="0dp"
+                android:layout_height="28dp"
+                android:layout_marginTop="1dp"
+                android:layout_marginEnd="50dp"
+                android:text="Location"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/task_title" />
+
+            <ImageButton
+                android:id="@+id/task_delete"
+                android:layout_width="48dp"
+                android:layout_height="41dp"
+                android:layout_marginEnd="50dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toEndOf="@+id/task_title"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_delete_forever_black_24dp" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/lower_group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toEndOf="@+id/task_title"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.186"
-            app:srcCompat="@drawable/ic_delete_forever_black_24dp" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/upper_group">
 
-        <TextView
-            android:id="@+id/task_status"
-            android:layout_width="64dp"
-            android:layout_height="37dp"
-            android:text="TextView"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/task_description"
-            app:layout_constraintTop_toBottomOf="@+id/task_due_date"
-            app:layout_constraintVertical_bias="0.0" />
+            <EditText
+                android:id="@+id/task_description"
+                android:layout_width="0dp"
+                android:layout_height="77dp"
+                android:layout_marginTop="1dp"
+                android:layout_marginEnd="110dp"
+                android:layout_marginBottom="1dp"
+                android:ems="10"
+                android:inputType="textPersonName"
+                android:text="Task Description"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.9" />
+
+            <EditText
+                android:id="@+id/task_due_date"
+                android:layout_width="0dp"
+                android:layout_height="34dp"
+                android:layout_marginStart="1dp"
+                android:layout_marginEnd="50dp"
+                android:ems="10"
+                android:inputType="date"
+                android:text="02/05/2020"
+                android:textSize="10sp"
+                app:layout_constraintBottom_toTopOf="@+id/task_status"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/task_description"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/task_status"
+                android:layout_width="0dp"
+                android:layout_height="28dp"
+                android:layout_marginStart="1dp"
+                android:layout_marginEnd="50dp"
+                android:text="TextView"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.48"
+                app:layout_constraintStart_toEndOf="@+id/task_description"
+                app:layout_constraintTop_toBottomOf="@+id/task_due_date" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

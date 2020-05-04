@@ -15,7 +15,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".TaskManagerActivity"
+            android:name=".view.TaskManagerActivity"
             android:label="@string/title_activity_task_manager"
             android:theme="@style/AppTheme.NoActionBar" >
             <intent-filter>

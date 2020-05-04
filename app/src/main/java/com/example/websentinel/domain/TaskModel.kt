@@ -2,8 +2,9 @@ package com.example.websentinel.domain
 
 import java.util.*
 
+
 data class TaskModel (
-    var id: UUID,
+    var id: String,
     var title: String,
     var dateCreated: Date,
     var description: String,

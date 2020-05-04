@@ -1,12 +1,16 @@
 package com.example.websentinel.data.database
 
+import android.util.Log
+import com.example.websentinel.data.DataSource
 import com.example.websentinel.domain.TaskModel
 import com.example.websentinel.domain.TaskRepository
 
-abstract class TaskDbStore(private val appDatabase: AppDatabase) : TaskRepository {
+ class TaskDbStore(private val appDatabase: AppDatabase) : TaskRepository {
 
     override fun getAll(): List<TaskModel> {
+        val dummy= DataSource()
         return appDatabase.taskDao().getAll().map { it.toDomainModel() }
+        //return dummy.getAll()
     }
 
     override fun addTask(task: TaskModel) {
