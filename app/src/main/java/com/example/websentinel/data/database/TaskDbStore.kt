@@ -8,19 +8,25 @@ import com.example.websentinel.domain.TaskRepository
  class TaskDbStore(private val appDatabase: AppDatabase) : TaskRepository {
 
     override fun getAll(): List<TaskModel> {
-        val dummy= DataSource()
+        Log.d("TaskDbStore", "retrieving task")
         return appDatabase.taskDao().getAll().map { it.toDomainModel() }
-        //return dummy.getAll()
     }
 
     override fun addTask(task: TaskModel) {
+        Log.d("TaskDbStore", "adding task")
         appDatabase.taskDao().insertTask(task.toDbModel())
     }
 
     override fun removeTask(task: TaskModel) {
+        Log.d("TaskDbStore", "removing task")
         appDatabase.taskDao().deleteTask(task.toDbModel())
     }
 
-    private fun TaskModel.toDbModel() = TaskEntity(id, title, dateCreated, description,  location, dueDate ,status )
+     override fun updateTask(task: TaskModel) {
+         Log.d("TaskDbStore", "updating task")
+         appDatabase.taskDao().updateTask(task.toDbModel())
+     }
+
+     private fun TaskModel.toDbModel() = TaskEntity(id, title, dateCreated, description,  location, dueDate ,status )
     private fun TaskEntity.toDomainModel() = TaskModel(id, title, dateCreated ,description,  location, dueDate, status )
 }

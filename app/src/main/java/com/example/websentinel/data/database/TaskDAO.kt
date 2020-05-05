@@ -1,8 +1,5 @@
 package com.example.websentinel.data.database
-import androidx.room.Dao
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.Query
+import androidx.room.*
 import com.example.websentinel.domain.TaskModel
 
 
@@ -16,4 +13,7 @@ interface TaskDAO {
 
     @Delete
     fun deleteTask(taskEntity: TaskEntity)
+
+    @Update
+    fun updateTask(taskEntity: TaskEntity)
 }

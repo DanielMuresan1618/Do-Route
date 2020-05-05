@@ -16,14 +16,18 @@ class TaskManagerViewModel(private val taskRepository: TaskRepository) : ViewMod
         tasksLiveData.postValue(tasks)
     }
 
-    fun addTask(title: String, dueDate: Date, description: String, location:String, status:String) {
-        taskRepository.addTask(TaskModel(randomUUID().toString(), title, Calendar.getInstance().time, description,location,dueDate,status))
+    fun addTask(id: String, title: String, dueDate: Date, description: String, location:String, status:String) {
+        taskRepository.addTask(TaskModel(id, title, Calendar.getInstance().time, description,location,dueDate,status))
         retrieveTasks()
     }
 
     fun removeTask(task: TaskModel) {
         taskRepository.removeTask(task)
         retrieveTasks()
+    }
+
+    fun updateTask(task:TaskModel){
+        taskRepository.updateTask(task)
     }
 
 }

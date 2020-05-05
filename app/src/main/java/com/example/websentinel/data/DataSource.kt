@@ -42,4 +42,8 @@ class DataSource :TaskRepository {
     override fun removeTask(task: TaskModel) {
 
     }
+
+    override fun updateTask(task: TaskModel) {
+
+    }
 }
