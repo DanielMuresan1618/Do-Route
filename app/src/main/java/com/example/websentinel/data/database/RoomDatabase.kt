@@ -2,7 +2,7 @@ package com.example.websentinel.data.database
 import android.content.Context
 import androidx.room.Room
 
-object RoomDatabase {
+object RoomDatabase { //singleton
 
     private var appDatabase: AppDatabase? = null
 

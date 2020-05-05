@@ -8,7 +8,7 @@ interface TaskDAO {
     @Query("SELECT * FROM tasks")
     fun getAll(): List<TaskEntity>
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertTask(taskEntity: TaskEntity)
 
     @Delete

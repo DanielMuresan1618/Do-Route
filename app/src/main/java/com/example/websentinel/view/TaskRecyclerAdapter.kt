@@ -57,6 +57,7 @@ class TaskRecyclerAdapter(
             itemView.task_title.addTextChangedListener(object : TextWatcher{
                 override fun afterTextChanged(s: Editable?) {
                     editingFinished=true
+                    tasks[adapterPosition].title = itemView.task_title.text.toString()
                 }
 
                 override fun beforeTextChanged(
@@ -79,11 +80,9 @@ class TaskRecyclerAdapter(
 
         private fun onFocuseChange(view:View, hasFocus:Boolean){
             if (!hasFocus && editingFinished){
-                Log.d("onFocusChange", "task is being saved")
                 editingFinished = false
                 onUpdate(tasks[adapterPosition])
             }
-
         }
 
         fun bind(task: TaskModel){

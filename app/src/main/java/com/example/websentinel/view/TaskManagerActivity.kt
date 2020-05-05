@@ -25,6 +25,7 @@ import com.example.websentinel.viewmodel.TaskManagerViewModelFactory
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.android.synthetic.main.activity_task_manager.*
 import java.util.*
+import java.util.UUID.randomUUID
 
 
 class TaskManagerActivity : AppCompatActivity() {
@@ -41,10 +42,15 @@ class TaskManagerActivity : AppCompatActivity() {
 
         val factory = TaskManagerViewModelFactory(TaskDbStore(RoomDatabase.getDb(this)))
         findViewById<FloatingActionButton>(R.id.task_add).setOnClickListener{addTask()}
+        findViewById<FloatingActionButton>(R.id.task_refresh).setOnClickListener{refreshTasks()}
+
 
         mTaskViewModel = ViewModelProvider(this, factory).get(TaskManagerViewModel::class.java) //.of(this) is deprecated!!
-        mTaskViewModel.retrieveTasks()
         initRecyclerView()
+    }
+
+    private fun refreshTasks() {
+        mTaskViewModel.retrieveTasks()
     }
 
     private fun initRecyclerView(){
@@ -58,16 +64,16 @@ class TaskManagerActivity : AppCompatActivity() {
             recycler_view.adapter = taskAdapter
         })
 
-        mTaskViewModel.retrieveTasks()
     }
 
     private fun update(task: TaskModel) {
-        mTaskViewModel.updateTask(task).apply { mTaskViewModel.retrieveTasks() }
+        mTaskViewModel.updateTask(task)
 
     }
 
+
     private fun addTask(){
-        mTaskViewModel.addTask("id","ceva", Date(2222222),"desc", "bla", "undone")
+        mTaskViewModel.addTask(randomUUID().toString(),"ceva", Date(2222222),"desc", "bla", "undone")
     }
 
     private fun delete(task: TaskModel){
