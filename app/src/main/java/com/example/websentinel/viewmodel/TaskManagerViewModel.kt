@@ -28,6 +28,7 @@ class TaskManagerViewModel(private val taskRepository: TaskRepository) : ViewMod
 
     fun updateTask(task:TaskModel){
         taskRepository.updateTask(task)
+        retrieveTasks()
     }
 
 }

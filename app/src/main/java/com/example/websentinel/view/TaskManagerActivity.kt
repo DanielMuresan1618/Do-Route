@@ -8,10 +8,13 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
+import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -23,6 +26,7 @@ import com.example.websentinel.domain.TaskModel
 import com.example.websentinel.viewmodel.TaskManagerViewModel
 import com.example.websentinel.viewmodel.TaskManagerViewModelFactory
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.navigation.NavigationView
 import kotlinx.android.synthetic.main.activity_task_manager.*
 import java.util.*
 import java.util.UUID.randomUUID
@@ -38,39 +42,34 @@ class TaskManagerActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_task_manager)
+
+
         createNotificationChannel()
 
         val factory = TaskManagerViewModelFactory(TaskDbStore(RoomDatabase.getDb(this)))
         findViewById<FloatingActionButton>(R.id.task_add).setOnClickListener{addTask()}
-        findViewById<FloatingActionButton>(R.id.task_refresh).setOnClickListener{refreshTasks()}
-
 
         mTaskViewModel = ViewModelProvider(this, factory).get(TaskManagerViewModel::class.java) //.of(this) is deprecated!!
         initRecyclerView()
     }
 
-    private fun refreshTasks() {
-        mTaskViewModel.retrieveTasks()
-    }
 
     private fun initRecyclerView(){
 
         recycler_view.apply {
             layoutManager = LinearLayoutManager(this@TaskManagerActivity)
-
         }
         mTaskViewModel.tasksLiveData.observe(this, Observer {
            taskAdapter= TaskRecyclerAdapter(it,this::delete,this::update)
             recycler_view.adapter = taskAdapter
         })
-
+        mTaskViewModel.retrieveTasks()
     }
 
     private fun update(task: TaskModel) {
         mTaskViewModel.updateTask(task)
 
     }
-
 
     private fun addTask(){
         mTaskViewModel.addTask(randomUUID().toString(),"ceva", Date(2222222),"desc", "bla", "undone")
@@ -93,7 +92,6 @@ class TaskManagerActivity : AppCompatActivity() {
             setNegativeButton(android.R.string.no) {_,_->}
             show()
         }
-
     }
 
 

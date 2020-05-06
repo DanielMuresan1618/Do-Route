@@ -11,12 +11,16 @@ import android.os.Handler
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.view.Gravity
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.FragmentActivity
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.location.*
@@ -36,6 +40,7 @@ import com.google.android.libraries.places.api.net.FetchPlaceRequest
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsResponse
 import com.google.android.libraries.places.api.net.PlacesClient
+import com.google.android.material.navigation.NavigationView
 import com.mancj.materialsearchbar.MaterialSearchBar
 import com.mancj.materialsearchbar.MaterialSearchBar.OnSearchActionListener
 import com.mancj.materialsearchbar.adapter.SuggestionsAdapter
@@ -47,7 +52,8 @@ class GoogleMapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private var mapView: View? = null
 
     //Device location
-    private var mFusedLocationProviderClient: FusedLocationProviderClient? = null // fetches the device's current location
+    private var mFusedLocationProviderClient: FusedLocationProviderClient? =
+        null // fetches the device's current location
     private var mLastKnownLocation: Location? = null
     private var locationCallback: LocationCallback? = null
     private var mLocationPermissionsGranted = false
@@ -56,6 +62,8 @@ class GoogleMapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private var predictionList: List<AutocompletePrediction>? = null
     private lateinit var materialSearchBar: MaterialSearchBar
     private lateinit var placesClient: PlacesClient //responsible for the places suggestions
+    private lateinit var drawerLayout: DrawerLayout
+    private lateinit var navView: NavigationView
 
 
     //Activity Lifecycle
@@ -72,6 +80,30 @@ class GoogleMapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
         //Material Search Bar
         materialSearchBar = findViewById(R.id.searchBar)
+
+
+        drawerLayout = findViewById(R.id.drawer_layout)
+        navView = findViewById(R.id.nav_view)
+
+        val toggle = ActionBarDrawerToggle(
+            this,
+            drawerLayout,
+            R.string.navigation_drawer_open,
+            R.string.navigation_drawer_close
+        )
+        drawerLayout.addDrawerListener(toggle)
+        toggle.syncState()//syncs the drawer icon when it is closed or open
+        navView.setNavigationItemSelectedListener { _ ->  true
+            //TODO: implement the when statements
+        }
+    }
+
+    override fun onBackPressed() {
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START)
+        } else {
+            super.onBackPressed()
+        }
     }
 
     override fun onDestroy() {
@@ -80,7 +112,11 @@ class GoogleMapsActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     //Permissions
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray){
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
         Log.d(TAG, "onRequestPermissionsResult: called.")
         mLocationPermissionsGranted = false
         when (requestCode) {
@@ -88,9 +124,9 @@ class GoogleMapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 if (grantResults.isNotEmpty()) {
                     grantResults.forEach { result ->
                         if (result != PackageManager.PERMISSION_GRANTED) {
-                        mLocationPermissionsGranted = false
-                        Log.d(TAG, "onRequestPermissionsResult: permission failed")
-                        return
+                            mLocationPermissionsGranted = false
+                            Log.d(TAG, "onRequestPermissionsResult: permission failed")
+                            return
                         }
                     }
                     Log.d(TAG, "onRequestPermissionsResult: permission granted")
@@ -165,7 +201,10 @@ class GoogleMapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 val currentPredictionList = predictionList //Take a snapshot of the prediction list
 
                 if (currentPredictionList == null || position >= currentPredictionList.size) {
-                    Log.d(TAG, "Current Prediction List: ${currentPredictionList.toString()}, Position: $position, ")
+                    Log.d(
+                        TAG,
+                        "Current Prediction List: ${currentPredictionList.toString()}, Position: $position, "
+                    )
                     return
                 }
                 val selectedPrediction = currentPredictionList[position]
@@ -301,8 +340,11 @@ class GoogleMapsActivity : AppCompatActivity(), OnMapReadyCallback {
         mapFragment?.getMapAsync(this@GoogleMapsActivity)
     }
 
-    private fun moveCamera( latLng : LatLng, zoom : Float) {
-        Log.d(TAG, "moveCamera: moving the camera to: lat: " + latLng.latitude + ", lng: " + latLng.longitude)
+    private fun moveCamera(latLng: LatLng, zoom: Float) {
+        Log.d(
+            TAG,
+            "moveCamera: moving the camera to: lat: " + latLng.latitude + ", lng: " + latLng.longitude
+        )
         mMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom))
         mMap?.clear()
     }
@@ -321,7 +363,10 @@ class GoogleMapsActivity : AppCompatActivity(), OnMapReadyCallback {
                     if (task.isSuccessful) {
                         Log.d(TAG, "onComplete: found location!")
                         val currentLocation = task.result
-                        moveCamera(LatLng(currentLocation!!.latitude, currentLocation.longitude), DEFAULT_ZOOM)
+                        moveCamera(
+                            LatLng(currentLocation!!.latitude, currentLocation.longitude),
+                            DEFAULT_ZOOM
+                        )
                     } else {
                         Log.d(TAG, "onComplete: current location is null")
                         Toast.makeText(
@@ -337,7 +382,7 @@ class GoogleMapsActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-    companion object{
+    companion object {
         private const val DEFAULT_ZOOM = 15f
         private const val TAG = "GoogleMapsActivity"
         private const val LOCATION_PERMISSION_REQUEST_CODE = 100

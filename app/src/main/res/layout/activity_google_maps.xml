@@ -1,31 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:openDrawer="start"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".GoogleMapsActivity">
 
-<fragment
-    android:id="@+id/map"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".GoogleMapsActivity"
-    android:name="com.google.android.gms.maps.SupportMapFragment"/>
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/nav_view"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        app:headerLayout="@layout/nav_header"
+        app:menu="@menu/map_menu" />
+
+    <fragment
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".GoogleMapsActivity" />
+
     <com.mancj.materialsearchbar.MaterialSearchBar
+        android:id="@+id/searchBar"
         style="@style/MaterialSearchBarLight"
-        app:mt_speechMode="false"
-        app:mt_hint="Search a place"
-        app:mt_maxSuggestionsCount="10"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/searchBar"
         android:layout_margin="16dp"
-        app:mt_navIconEnabled="true"
         android:elevation="5dp"
         android:outlineProvider="bounds"
-        app:mt_placeholder="Search a place"/>
+        app:mt_hint="Search a place"
+        app:mt_maxSuggestionsCount="10"
+        app:mt_navIconEnabled="true"
+        app:mt_placeholder="Search a place"
+        app:mt_speechMode="false" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/location_pin"
@@ -38,4 +50,4 @@
         android:layout_marginEnd="186dp"
         android:layout_marginBottom="348dp"
         android:src="@drawable/ic_pin" />
-</RelativeLayout>
+</androidx.drawerlayout.widget.DrawerLayout>
