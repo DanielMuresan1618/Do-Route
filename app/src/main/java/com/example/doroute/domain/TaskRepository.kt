@@ -1,4 +1,4 @@
-package com.example.websentinel.domain
+package com.example.doroute.domain
 
 
 interface TaskRepository {

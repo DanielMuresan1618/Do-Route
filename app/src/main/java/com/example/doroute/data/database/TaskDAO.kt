@@ -1,6 +1,5 @@
-package com.example.websentinel.data.database
+package com.example.doroute.data.database
 import androidx.room.*
-import com.example.websentinel.domain.TaskModel
 
 
 @Dao

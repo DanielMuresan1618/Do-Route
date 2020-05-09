@@ -1,4 +1,4 @@
-package com.example.websentinel.view
+package com.example.doroute.view.task_manager
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -8,25 +8,21 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
-import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.websentinel.GoogleMapsActivity
-import com.example.websentinel.R
-import com.example.websentinel.data.database.RoomDatabase
-import com.example.websentinel.data.database.TaskDbStore
-import com.example.websentinel.domain.TaskModel
-import com.example.websentinel.viewmodel.TaskManagerViewModel
-import com.example.websentinel.viewmodel.TaskManagerViewModelFactory
+import com.example.doroute.GoogleMapsFragment
+import com.example.doroute.R
+import com.example.doroute.data.database.RoomDatabase
+import com.example.doroute.data.database.TaskDbStore
+import com.example.doroute.domain.TaskModel
+import com.example.doroute.viewmodel.TaskManagerViewModel
+import com.example.doroute.viewmodel.TaskManagerViewModelFactory
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.material.navigation.NavigationView
 import kotlinx.android.synthetic.main.activity_task_manager.*
 import java.util.*
 import java.util.UUID.randomUUID
@@ -60,7 +56,12 @@ class TaskManagerActivity : AppCompatActivity() {
             layoutManager = LinearLayoutManager(this@TaskManagerActivity)
         }
         mTaskViewModel.tasksLiveData.observe(this, Observer {
-           taskAdapter= TaskRecyclerAdapter(it,this::delete,this::update)
+           taskAdapter=
+               TaskRecyclerAdapter(
+                   it,
+                   this::delete,
+                   this::update
+               )
             recycler_view.adapter = taskAdapter
         })
         mTaskViewModel.retrieveTasks()
@@ -96,7 +97,7 @@ class TaskManagerActivity : AppCompatActivity() {
 
 
     private fun buildNotification(){
-        val intent = Intent(this, GoogleMapsActivity::class.java).apply {
+        val intent = Intent(this, GoogleMapsFragment::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
         val pendingIntent: PendingIntent = PendingIntent.getActivity(this, 0, intent, 0)

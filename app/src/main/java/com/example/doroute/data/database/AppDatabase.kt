@@ -1,8 +1,8 @@
-package com.example.websentinel.data.database
+package com.example.doroute.data.database
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.example.websentinel.helpers.Converters
+import com.example.doroute.helpers.Converters
 
 
 @Database(entities = [TaskEntity::class], version = 1)

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.websentinel">
+    package="com.example.doroute">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -15,19 +15,30 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".view.TaskManagerActivity"
-            android:label="@string/title_activity_task_manager"
-            android:theme="@style/AppTheme.NoActionBar" >
+            android:name="com.example.doroute.MainActivity"
+            android:label="@string/title_activity_main"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".MapWithNavigationActivity"
+            android:label="@string/title_activity_map_with_navigation"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
-        <activity android:name=".GoogleMapsActivity">
-
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
+        <activity
+            android:name="com.example.doroute.view.task_manager.TaskManagerActivity"
+            android:label="@string/title_activity_task_manager"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".GoogleMapsFragment"></activity>
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"

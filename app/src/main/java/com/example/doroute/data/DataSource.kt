@@ -1,7 +1,7 @@
-package com.example.websentinel.data
+package com.example.doroute.data
 
-import com.example.websentinel.domain.TaskModel
-import com.example.websentinel.domain.TaskRepository
+import com.example.doroute.domain.TaskModel
+import com.example.doroute.domain.TaskRepository
 import java.util.*
 import java.util.UUID.randomUUID
 import kotlin.collections.ArrayList

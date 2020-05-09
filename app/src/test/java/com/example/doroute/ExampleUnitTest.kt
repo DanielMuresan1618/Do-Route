@@ -1,4 +1,4 @@
-package com.example.websentinel
+package com.example.doroute
 
 import org.junit.Test
 

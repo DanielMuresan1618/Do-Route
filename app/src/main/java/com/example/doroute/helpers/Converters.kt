@@ -1,4 +1,4 @@
-package com.example.websentinel.helpers
+package com.example.doroute.helpers
 
 import androidx.room.TypeConverter
 import java.util.*

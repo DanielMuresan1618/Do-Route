@@ -1,8 +1,8 @@
-package com.example.websentinel.viewmodel
+package com.example.doroute.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.websentinel.domain.TaskRepository
+import com.example.doroute.domain.TaskRepository
 
 class TaskManagerViewModelFactory(private val taskRepository: TaskRepository) : ViewModelProvider.NewInstanceFactory() {
 

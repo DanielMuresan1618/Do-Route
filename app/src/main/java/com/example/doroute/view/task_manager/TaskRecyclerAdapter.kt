@@ -1,17 +1,14 @@
-package com.example.websentinel.view
+package com.example.doroute.view.task_manager
 
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.RecyclerView
-import com.example.websentinel.R
-import com.example.websentinel.domain.TaskModel
+import com.example.doroute.R
+import com.example.doroute.domain.TaskModel
 import kotlinx.android.synthetic.main.task.view.*
-import org.w3c.dom.Text
 
 
 class TaskRecyclerAdapter(

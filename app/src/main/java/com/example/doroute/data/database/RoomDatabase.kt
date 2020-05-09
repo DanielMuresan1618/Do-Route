@@ -1,4 +1,4 @@
-package com.example.websentinel.data.database
+package com.example.doroute.data.database
 import android.content.Context
 import androidx.room.Room
 
