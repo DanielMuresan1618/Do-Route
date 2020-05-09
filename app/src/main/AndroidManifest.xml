@@ -20,26 +20,13 @@
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
-            android:name=".MapWithNavigationActivity"
-            android:label="@string/title_activity_map_with_navigation"
-            android:theme="@style/AppTheme.NoActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name="com.example.doroute.view.task_manager.TaskManagerActivity"
+            android:name="com.example.doroute.view.task_manager.TaskManagerFragment"
             android:label="@string/title_activity_task_manager"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".GoogleMapsFragment"></activity>
-
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/mapsKey" />

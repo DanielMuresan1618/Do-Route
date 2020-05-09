@@ -22,4 +22,8 @@
 
     <string name="home_second">Home Second</string>
     <string name="title_activity_main">MainActivity</string>
+    <string name="map">Map</string>
+    <string name="menu_map">map</string>
+    <string name="menu_tasks">Tasks</string>
+    <string name="menu_schedules">Schedules</string>
 </resources>

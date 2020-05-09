@@ -12,10 +12,10 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.doroute.GoogleMapsFragment
 import com.example.doroute.R
 import com.example.doroute.data.database.RoomDatabase
 import com.example.doroute.data.database.TaskDbStore
@@ -28,7 +28,7 @@ import java.util.*
 import java.util.UUID.randomUUID
 
 
-class TaskManagerActivity : AppCompatActivity() {
+class TaskManagerFragment : Fragment() {
 
     private val CHANNEL_ID: String = "channel1"
     private lateinit var notificationBuilder:NotificationCompat.Builder
@@ -53,7 +53,7 @@ class TaskManagerActivity : AppCompatActivity() {
     private fun initRecyclerView(){
 
         recycler_view.apply {
-            layoutManager = LinearLayoutManager(this@TaskManagerActivity)
+            layoutManager = LinearLayoutManager(this@TaskManagerFragment)
         }
         mTaskViewModel.tasksLiveData.observe(this, Observer {
            taskAdapter=
@@ -97,7 +97,7 @@ class TaskManagerActivity : AppCompatActivity() {
 
 
     private fun buildNotification(){
-        val intent = Intent(this, GoogleMapsFragment::class.java).apply {
+        /*val intent = Intent(this, GoogleMapsFragment::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
         val pendingIntent: PendingIntent = PendingIntent.getActivity(this, 0, intent, 0)
@@ -111,6 +111,8 @@ class TaskManagerActivity : AppCompatActivity() {
             // Set the intent that will fire when the user taps the notification
             .setContentIntent(pendingIntent)
             .setAutoCancel(true)
+
+         */
     }
 
     private fun createNotificationChannel() {
