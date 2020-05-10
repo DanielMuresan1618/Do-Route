@@ -27,5 +27,5 @@ import com.example.doroute.domain.TaskRepository
      }
 
      private fun TaskModel.toDbModel() = TaskEntity(id, title, dateCreated, description,  location, dueDate ,status )
-    private fun TaskEntity.toDomainModel() = TaskModel(id, title, dateCreated ,description,  location, dueDate, status )
+     private fun TaskEntity.toDomainModel() = TaskModel(id, title, dateCreated ,description,  location, dueDate, status )
 }

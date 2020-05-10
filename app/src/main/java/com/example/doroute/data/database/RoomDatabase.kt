@@ -2,7 +2,7 @@ package com.example.doroute.data.database
 import android.content.Context
 import androidx.room.Room
 
-object RoomDatabase { //singleton
+object RoomDatabase { //singleton; only returns an AppDatabase
 
     private var appDatabase: AppDatabase? = null
 

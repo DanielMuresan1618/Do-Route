@@ -14,6 +14,10 @@ android {
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
+    viewBinding{
+        enabled=true
+    }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -67,6 +71,11 @@ dependencies {
     api 'androidx.core:core-ktx:1.2.0'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     api "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+
+    //Lifecycle
+    annotationProcessor "androidx.lifecycle:lifecycle-compiler:2.2.0"
+    implementation "androidx.lifecycle:lifecycle-runtime:2.2.0"
+    implementation "androidx.lifecycle:lifecycle-common-java8:2.2.0"
 
     // Maps utils (required for custom markers)
     implementation 'com.google.maps.android:android-maps-utils:0.5'

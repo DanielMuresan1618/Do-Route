@@ -4,7 +4,6 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,29 +15,33 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.doroute.R
 import com.example.doroute.data.database.RoomDatabase
 import com.example.doroute.data.database.TaskDbStore
+import com.example.doroute.databinding.FragmentTaskManagerBinding
 import com.example.doroute.domain.TaskModel
 import com.example.doroute.viewmodel.TaskViewModel
 import com.example.doroute.viewmodel.TaskViewModelFactory
 import kotlinx.android.synthetic.main.fragment_task_manager.*
+import viewLifecycle
 import java.util.*
 import java.util.UUID.randomUUID
 
 
- class TaskManagerFragment : Fragment() {
+class TaskManagerFragment : Fragment() {
 
     private val CHANNEL_ID: String = "channel1"
     private lateinit var notificationBuilder:NotificationCompat.Builder
     private lateinit var taskAdapter: TaskRecyclerAdapter
     private lateinit var mTaskViewModel: TaskViewModel
-    private lateinit var rootView:View
+    private val binding by viewLifecycle{FragmentTaskManagerBinding.bind(requireView())}
+
+
 
     // View initialization logic
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?{
-      rootView =  inflater.inflate(R.layout.fragment_task_manager,container,false)
-        return rootView
+        val _binding = FragmentTaskManagerBinding.inflate(inflater,container,false)
+        val view = _binding.root
+        return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

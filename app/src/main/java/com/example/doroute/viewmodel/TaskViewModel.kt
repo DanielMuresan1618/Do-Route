@@ -7,9 +7,11 @@ import com.example.doroute.domain.TaskRepository
 import java.util.*
 
 class TaskViewModel(private val taskRepository: TaskRepository) : ViewModel() {
+    //1) Livedata
+    val tasksLiveData = MutableLiveData<List<TaskModel>>() //all tasks from the RecyclerView
+    val taskLiveData = MutableLiveData<TaskModel>() //the current task
 
-    val tasksLiveData = MutableLiveData<List<TaskModel>>()
-
+    //2) Communication with the Repository
     fun retrieveTasks() {
         val tasks = taskRepository.getAll()
         tasksLiveData.postValue(tasks)
@@ -29,5 +31,4 @@ class TaskViewModel(private val taskRepository: TaskRepository) : ViewModel() {
         taskRepository.updateTask(task)
         retrieveTasks()
     }
-
 }
