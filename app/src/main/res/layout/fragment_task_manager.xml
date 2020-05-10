@@ -4,8 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.map.GalleryFragment">
+    tools:context=".view.task_manager.TaskManagerFragment">
 
-    <include layout="@layout/activity_task_manager"/>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:layout_editor_absoluteX="16dp"
+        tools:layout_editor_absoluteY="137dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

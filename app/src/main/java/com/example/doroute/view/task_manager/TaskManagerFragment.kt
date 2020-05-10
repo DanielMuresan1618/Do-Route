@@ -2,14 +2,14 @@ package com.example.doroute.view.task_manager
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.app.PendingIntent
-import android.content.Context
-import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.fragment.app.Fragment
@@ -20,42 +20,56 @@ import com.example.doroute.R
 import com.example.doroute.data.database.RoomDatabase
 import com.example.doroute.data.database.TaskDbStore
 import com.example.doroute.domain.TaskModel
-import com.example.doroute.viewmodel.TaskManagerViewModel
-import com.example.doroute.viewmodel.TaskManagerViewModelFactory
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import kotlinx.android.synthetic.main.activity_task_manager.*
+import com.example.doroute.helpers.IMainActivity
+import com.example.doroute.viewmodel.task_manager.TaskManagerViewModel
+import com.example.doroute.viewmodel.task_manager.TaskManagerViewModelFactory
+import kotlinx.android.synthetic.main.fragment_task_manager.*
 import java.util.*
 import java.util.UUID.randomUUID
 
 
-class TaskManagerFragment : Fragment() {
+ class TaskManagerFragment : Fragment() {
 
     private val CHANNEL_ID: String = "channel1"
     private lateinit var notificationBuilder:NotificationCompat.Builder
     private lateinit var taskAdapter: TaskRecyclerAdapter
     private lateinit var mTaskViewModel: TaskManagerViewModel
+    private lateinit var rootView:View
+    internal lateinit var fabListener: IMainActivity
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_task_manager)
-
-
-        createNotificationChannel()
-
-        val factory = TaskManagerViewModelFactory(TaskDbStore(RoomDatabase.getDb(this)))
-        findViewById<FloatingActionButton>(R.id.task_add).setOnClickListener{addTask()}
-
-        mTaskViewModel = ViewModelProvider(this, factory).get(TaskManagerViewModel::class.java) //.of(this) is deprecated!!
-        initRecyclerView()
+    // View initialization logic
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?{
+      rootView =  inflater.inflate(R.layout.fragment_task_manager,container,false)
+        return rootView
     }
 
+    fun setFabListener(callback: IMainActivity) {
+        this.fabListener=callback
+        //TODO: replace this with whatever you need to do with the fab
+        Log.d("fabOnClickListener", "called from TaskManagerFragment")
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        //View model
+        val factory =
+            TaskManagerViewModelFactory(
+                TaskDbStore(RoomDatabase.getDb(this.requireContext()))
+            )
+        mTaskViewModel = ViewModelProvider(this, factory).get(TaskManagerViewModel::class.java) //.of(this) is deprecated!!
+
+
+        //Recycler view
+        initRecyclerView()
+    }
 
     private fun initRecyclerView(){
 
         recycler_view.apply {
-            layoutManager = LinearLayoutManager(this@TaskManagerFragment)
+            layoutManager = LinearLayoutManager(this@TaskManagerFragment.requireContext())
         }
-        mTaskViewModel.tasksLiveData.observe(this, Observer {
+        mTaskViewModel.tasksLiveData.observe(viewLifecycleOwner, Observer {
            taskAdapter=
                TaskRecyclerAdapter(
                    it,
@@ -65,6 +79,7 @@ class TaskManagerFragment : Fragment() {
             recycler_view.adapter = taskAdapter
         })
         mTaskViewModel.retrieveTasks()
+
     }
 
     private fun update(task: TaskModel) {
@@ -77,7 +92,7 @@ class TaskManagerFragment : Fragment() {
     }
 
     private fun delete(task: TaskModel){
-        val builder = AlertDialog.Builder(this)
+        val builder = AlertDialog.Builder(this@TaskManagerFragment.requireContext())
         with(builder){
             setTitle("Warning!")
             setMessage("Are you sure you want to delete '${task.title}'?")
@@ -86,7 +101,7 @@ class TaskManagerFragment : Fragment() {
             setPositiveButton(android.R.string.yes) { dialog, which ->
 
                 mTaskViewModel.removeTask(task)
-                Toast.makeText(applicationContext,
+                Toast.makeText(this@TaskManagerFragment.requireContext(),
                     "The task '${task.title}' was deleted", Toast.LENGTH_SHORT).show()
                 notifyNow()
             }
@@ -126,15 +141,14 @@ class TaskManagerFragment : Fragment() {
                 description = descriptionText
             }
             // Register the channel with the system
-            val notificationManager: NotificationManager =
-                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            notificationManager.createNotificationChannel(channel)
+            //val notificationManager: NotificationManager =  getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+           // notificationManager.createNotificationChannel(channel)
         }
     }
 
     private fun notifyNow(){
         buildNotification()
-        with(NotificationManagerCompat.from(this)) {
+        with(NotificationManagerCompat.from(this@TaskManagerFragment.requireContext())) {
             // notificationId is a unique int for each notification that you must define
             notify(112, notificationBuilder.build())
         }

@@ -1,4 +1,4 @@
-package com.example.doroute.viewmodel
+package com.example.doroute.viewmodel.task_manager
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -8,7 +8,9 @@ class TaskManagerViewModelFactory(private val taskRepository: TaskRepository) : 
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        return TaskManagerViewModel(taskRepository) as T
+        return TaskManagerViewModel(
+            taskRepository
+        ) as T
     }
 
 }

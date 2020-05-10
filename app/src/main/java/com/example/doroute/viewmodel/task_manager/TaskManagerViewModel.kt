@@ -1,4 +1,4 @@
-package com.example.doroute.viewmodel
+package com.example.doroute.viewmodel.task_manager
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel

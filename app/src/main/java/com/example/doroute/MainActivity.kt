@@ -1,6 +1,7 @@
 package com.example.doroute
 
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
@@ -13,8 +14,11 @@ import androidx.navigation.ui.setupWithNavController
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.fragment.app.Fragment
+import com.example.doroute.helpers.IMainActivity
+import com.example.doroute.view.task_manager.TaskManagerFragment
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), IMainActivity {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
 
@@ -52,5 +56,15 @@ class MainActivity : AppCompatActivity() {
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.nav_host_fragment)
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
+    }
+
+    override fun onAttachFragment(fragment: Fragment) {
+       super.onAttachFragment(fragment)
+        if (fragment is TaskManagerFragment)
+            fragment.setFabListener(this)
+    }
+
+    override fun fabOnClickListener() {
+        Log.d("fabOnClickListener", "called from MainActivity")
     }
 }

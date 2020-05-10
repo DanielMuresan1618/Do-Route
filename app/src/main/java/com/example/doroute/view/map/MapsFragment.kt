@@ -7,6 +7,7 @@ import com.google.android.gms.maps.OnMapReadyCallback
 
 
 class MapsFragment : MapFragment(), OnMapReadyCallback, View.OnClickListener {
+    //Navigation doesn't show until I inflate it
     private lateinit var mMapView: GoogleMap
 
     override fun onMapReady(p0: GoogleMap?) {
