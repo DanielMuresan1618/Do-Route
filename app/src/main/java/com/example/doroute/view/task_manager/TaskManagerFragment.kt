@@ -20,9 +20,8 @@ import com.example.doroute.R
 import com.example.doroute.data.database.RoomDatabase
 import com.example.doroute.data.database.TaskDbStore
 import com.example.doroute.domain.TaskModel
-import com.example.doroute.helpers.IMainActivity
-import com.example.doroute.viewmodel.task_manager.TaskManagerViewModel
-import com.example.doroute.viewmodel.task_manager.TaskManagerViewModelFactory
+import com.example.doroute.viewmodel.TaskViewModel
+import com.example.doroute.viewmodel.TaskViewModelFactory
 import kotlinx.android.synthetic.main.fragment_task_manager.*
 import java.util.*
 import java.util.UUID.randomUUID
@@ -33,9 +32,8 @@ import java.util.UUID.randomUUID
     private val CHANNEL_ID: String = "channel1"
     private lateinit var notificationBuilder:NotificationCompat.Builder
     private lateinit var taskAdapter: TaskRecyclerAdapter
-    private lateinit var mTaskViewModel: TaskManagerViewModel
+    private lateinit var mTaskViewModel: TaskViewModel
     private lateinit var rootView:View
-    internal lateinit var fabListener: IMainActivity
 
     // View initialization logic
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?{
@@ -43,21 +41,15 @@ import java.util.UUID.randomUUID
         return rootView
     }
 
-    fun setFabListener(callback: IMainActivity) {
-        this.fabListener=callback
-        //TODO: replace this with whatever you need to do with the fab
-        Log.d("fabOnClickListener", "called from TaskManagerFragment")
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         //View model
         val factory =
-            TaskManagerViewModelFactory(
+            TaskViewModelFactory(
                 TaskDbStore(RoomDatabase.getDb(this.requireContext()))
             )
-        mTaskViewModel = ViewModelProvider(this, factory).get(TaskManagerViewModel::class.java) //.of(this) is deprecated!!
+        mTaskViewModel = ViewModelProvider(this, factory).get(TaskViewModel::class.java) //.of(this) is deprecated!!
 
 
         //Recycler view
@@ -79,7 +71,6 @@ import java.util.UUID.randomUUID
             recycler_view.adapter = taskAdapter
         })
         mTaskViewModel.retrieveTasks()
-
     }
 
     private fun update(task: TaskModel) {

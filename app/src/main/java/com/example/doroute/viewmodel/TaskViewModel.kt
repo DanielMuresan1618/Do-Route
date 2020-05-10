@@ -1,4 +1,4 @@
-package com.example.doroute.viewmodel.task_manager
+package com.example.doroute.viewmodel
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -6,7 +6,7 @@ import com.example.doroute.domain.TaskModel
 import com.example.doroute.domain.TaskRepository
 import java.util.*
 
-class TaskManagerViewModel(private val taskRepository: TaskRepository) : ViewModel() {
+class TaskViewModel(private val taskRepository: TaskRepository) : ViewModel() {
 
     val tasksLiveData = MutableLiveData<List<TaskModel>>()
 
