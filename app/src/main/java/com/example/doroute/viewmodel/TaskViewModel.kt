@@ -2,33 +2,35 @@ package com.example.doroute.viewmodel
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.doroute.domain.TaskModel
-import com.example.doroute.domain.TaskRepository
+import com.example.doroute.data.models.TaskModel
+import com.example.doroute.data.domain.Repository
 import java.util.*
 
-class TaskViewModel(private val taskRepository: TaskRepository) : ViewModel() {
+class TaskViewModel(private val repository: Repository<TaskModel>) : ViewModel() {
     //1) Livedata
     val tasksLiveData = MutableLiveData<List<TaskModel>>() //all tasks from the RecyclerView
     val taskLiveData = MutableLiveData<TaskModel>() //the current task
 
     //2) Communication with the Repository
     fun retrieveTasks() {
-        val tasks = taskRepository.getAll()
+        val tasks = repository.getAll()
         tasksLiveData.postValue(tasks)
     }
 
-    fun addTask(id: String, title: String, dueDate: Date, description: String, location:String, status:String) {
-        taskRepository.addTask(TaskModel(id, title, Calendar.getInstance().time, description,location,dueDate,status))
+    fun addTask(taskId: String, locationId:String, statusId: String, title:String, description:String, dueDate:Date) {
+        repository.add(
+            TaskModel(taskId,locationId,statusId,title,description,dueDate)
+        )
         retrieveTasks()
     }
 
     fun removeTask(task: TaskModel) {
-        taskRepository.removeTask(task)
+        repository.remove(task)
         retrieveTasks()
     }
 
-    fun updateTask(task:TaskModel){
-        taskRepository.updateTask(task)
+    fun updateTask(task: TaskModel){
+        repository.update(task)
         retrieveTasks()
     }
 }

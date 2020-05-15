@@ -1,10 +1,10 @@
-package com.example.doroute.domain.stores
+package com.example.doroute.data.domain.stores
 
 import android.util.Log
 import com.example.doroute.data.database.AppDatabase
 import com.example.doroute.data.database.entities.LocationEntity
-import com.example.doroute.domain.Repository
-import com.example.doroute.models.LocationModel
+import com.example.doroute.data.domain.Repository
+import com.example.doroute.data.models.LocationModel
 
 
 class LocationDbStore(private val appDatabase: AppDatabase) : Repository<LocationModel> {

@@ -12,15 +12,19 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.doroute.R
 import com.example.doroute.data.database.RoomDatabase
-import com.example.doroute.data.database.TaskDbStore
+import com.example.doroute.data.domain.stores.TaskDbStore
+import com.example.doroute.databinding.ActivityMainBinding
 import com.example.doroute.databinding.FragmentTaskManagerBinding
-import com.example.doroute.domain.TaskModel
+import com.example.doroute.data.models.TaskModel
 import com.example.doroute.viewmodel.TaskViewModel
 import com.example.doroute.viewmodel.TaskViewModelFactory
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.android.synthetic.main.fragment_task_manager.*
 import viewLifecycle
 import java.util.*
@@ -32,8 +36,9 @@ class TaskManagerFragment : Fragment() {
     private val CHANNEL_ID: String = "channel1"
     private lateinit var notificationBuilder:NotificationCompat.Builder
     private lateinit var taskAdapter: TaskRecyclerAdapter
-    private lateinit var mTaskViewModel: TaskViewModel
+    private lateinit var viewModel: TaskViewModel
     private val binding by viewLifecycle{FragmentTaskManagerBinding.bind(requireView())}
+    private val main_binding by viewLifecycle{ActivityMainBinding.bind(requireView())}
 
 
 
@@ -46,25 +51,30 @@ class TaskManagerFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        activity?.findViewById<FloatingActionButton>(R.id.fab)?.setOnClickListener{addTask()}
         //View model
         val factory =
             TaskViewModelFactory(
-                TaskDbStore(RoomDatabase.getDb(this.requireContext()))
+                TaskDbStore(
+                    RoomDatabase.getDb(
+                        this.requireContext()
+                    )
+                )
             )
-        mTaskViewModel = ViewModelProvider(this, factory).get(TaskViewModel::class.java) //.of(this) is deprecated!!
+        viewModel = ViewModelProvider(this,factory).get(TaskViewModel::class.java) //.of(this) is deprecated
 
 
         //Recycler view
         initRecyclerView()
     }
 
+
     private fun initRecyclerView(){
 
         recycler_view.apply {
             layoutManager = LinearLayoutManager(this@TaskManagerFragment.requireContext())
         }
-        mTaskViewModel.tasksLiveData.observe(viewLifecycleOwner, Observer {
+        viewModel.tasksLiveData.observe(viewLifecycleOwner, Observer {
            taskAdapter=
                TaskRecyclerAdapter(
                    it,
@@ -73,16 +83,16 @@ class TaskManagerFragment : Fragment() {
                )
             recycler_view.adapter = taskAdapter
         })
-        mTaskViewModel.retrieveTasks()
+        viewModel.retrieveTasks()
     }
 
     private fun update(task: TaskModel) {
-        mTaskViewModel.updateTask(task)
+        viewModel.updateTask(task)
 
     }
 
     private fun addTask(){
-        mTaskViewModel.addTask(randomUUID().toString(),"ceva", Date(2222222),"desc", "bla", "undone")
+        viewModel.addTask(randomUUID().toString(),"locationId", "stateId","Titlee", "descriptionnn", Calendar.getInstance().time)
     }
 
     private fun delete(task: TaskModel){
@@ -94,10 +104,10 @@ class TaskManagerFragment : Fragment() {
 
             setPositiveButton(android.R.string.yes) { dialog, which ->
 
-                mTaskViewModel.removeTask(task)
+                viewModel.removeTask(task)
                 Toast.makeText(this@TaskManagerFragment.requireContext(),
                     "The task '${task.title}' was deleted", Toast.LENGTH_SHORT).show()
-                notifyNow()
+
             }
             setNegativeButton(android.R.string.no) {_,_->}
             show()

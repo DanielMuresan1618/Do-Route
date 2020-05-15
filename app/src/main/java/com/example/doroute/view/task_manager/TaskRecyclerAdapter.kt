@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.doroute.R
-import com.example.doroute.domain.TaskModel
+import com.example.doroute.data.models.TaskModel
 import kotlinx.android.synthetic.main.task.view.*
 
 
@@ -85,10 +85,9 @@ class TaskRecyclerAdapter(
         fun bind(task: TaskModel){
             itemView.task_title.setText(task.title)
             itemView.task_description.setText(task.description)
-            itemView.task_date_created.text = task.dateCreated.toString()
             itemView.task_due_date.setText(task.dueDate.toString())
-            itemView.task_location.text = task.location
-            itemView.task_status.text = task.status
+            itemView.task_location.text = task.locationId
+            itemView.task_status.text = task.statusId
         }
     }
 }

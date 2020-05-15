@@ -1,4 +1,4 @@
-package com.example.doroute.domain
+package com.example.doroute.data.domain
 
 
 interface Repository<T> {

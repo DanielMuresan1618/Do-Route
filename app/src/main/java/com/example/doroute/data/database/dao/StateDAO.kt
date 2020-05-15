@@ -8,6 +8,6 @@ interface StateDAO : GenericDAO<StateEntity> {
     @Query("SELECT * FROM task_states")
     fun getAll(): List<StateEntity>
 
-    @Query("SELECT name FROM task_states WHERE stateId=:id")
+    @Query("SELECT * FROM task_states WHERE stateId=:id")
     fun get(id: String): StateEntity
 }

@@ -1,6 +1,4 @@
-package com.example.doroute.models
-
-import com.google.android.gms.maps.model.LatLng
+package com.example.doroute.data.models
 
 data class LocationModel(
      var locationId: String,

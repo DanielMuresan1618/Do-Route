@@ -1,11 +1,11 @@
 package com.example.doroute.data
 
-import com.example.doroute.models.TaskModel
-import com.example.doroute.domain.Repository
+import com.example.doroute.data.models.TaskModel
+import com.example.doroute.data.domain.Repository
 import java.util.*
 import java.util.UUID.randomUUID
 import kotlin.collections.ArrayList
-
+/*
 class DataSource :Repository {
     override fun getAll(): List<TaskModel> {
         val list = ArrayList<TaskModel>()
@@ -46,4 +46,4 @@ class DataSource :Repository {
     override fun updateTask(task: TaskModel) {
 
     }
-}
+ }*/

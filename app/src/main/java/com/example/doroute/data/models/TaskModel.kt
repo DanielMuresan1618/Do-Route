@@ -1,4 +1,4 @@
-package com.example.doroute.models
+package com.example.doroute.data.models
 
 import java.util.*
 

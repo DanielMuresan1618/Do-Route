@@ -1,10 +1,9 @@
-package com.example.doroute.domain.stores
+package com.example.doroute.data.domain.stores
 
-import android.util.Log
 import com.example.doroute.data.database.AppDatabase
 import com.example.doroute.data.database.entities.TaskEntity
-import com.example.doroute.models.TaskModel
-import com.example.doroute.domain.Repository
+import com.example.doroute.data.models.TaskModel
+import com.example.doroute.data.domain.Repository
 
 class TaskDbStore(private val appDatabase: AppDatabase) : Repository<TaskModel> {
 

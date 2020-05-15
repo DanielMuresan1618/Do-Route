@@ -1,4 +1,4 @@
-package com.example.doroute.models
+package com.example.doroute.data.models
 
 data class StateModel(
     val stateId: String,
