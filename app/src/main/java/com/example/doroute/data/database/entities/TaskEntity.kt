@@ -1,31 +1,30 @@
-package com.example.doroute.data.database
+package com.example.doroute.data.database.entities
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import java.util.Date
+import java.util.*
 
 
 @Entity(tableName = "tasks")
 data class TaskEntity(
     @PrimaryKey
-    val id: String,
+    val taskId: String,
+
+    @ColumnInfo(name = "locationId")
+    val locationId: String,
+
+    @ColumnInfo(name = "stateId")
+    val statusId: String,
 
     @ColumnInfo(name = "title")
     val title: String,
 
-    @ColumnInfo(name = "date_created")
-    val dateCreated: Date,
-
     @ColumnInfo(name = "description")
     val description: String,
 
-    @ColumnInfo(name = "location")
-    val location: String,
-
     @ColumnInfo(name = "due_date")
-    val dueDate: Date,
-
-    @ColumnInfo(name = "status")
-    val status: String
+    val dueDate: Date
 )
+
+
