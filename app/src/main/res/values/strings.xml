@@ -13,4 +13,5 @@
     <string name="menu_tasks">Tasks</string>
     <string name="menu_schedules">Schedules</string>
     <string name="task_manager_title">Task Manager</string>
+    <string name="title_activity_test">Map</string>
 </resources>

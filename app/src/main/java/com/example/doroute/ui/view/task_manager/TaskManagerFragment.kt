@@ -1,4 +1,4 @@
-package com.example.doroute.view.task_manager
+package com.example.doroute.ui.view.task_manager
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -12,7 +12,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -22,8 +21,8 @@ import com.example.doroute.data.domain.stores.TaskDbStore
 import com.example.doroute.databinding.ActivityMainBinding
 import com.example.doroute.databinding.FragmentTaskManagerBinding
 import com.example.doroute.data.models.TaskModel
-import com.example.doroute.viewmodel.TaskViewModel
-import com.example.doroute.viewmodel.TaskViewModelFactory
+import com.example.doroute.ui.viewmodel.TaskViewModel
+import com.example.doroute.ui.viewmodel.TaskViewModelFactory
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.android.synthetic.main.fragment_task_manager.*
 import viewLifecycle
@@ -37,16 +36,15 @@ class TaskManagerFragment : Fragment() {
     private lateinit var notificationBuilder:NotificationCompat.Builder
     private lateinit var taskAdapter: TaskRecyclerAdapter
     private lateinit var viewModel: TaskViewModel
-    private val binding by viewLifecycle{FragmentTaskManagerBinding.bind(requireView())}
+    private lateinit var binding: FragmentTaskManagerBinding
     private val main_binding by viewLifecycle{ActivityMainBinding.bind(requireView())}
 
 
 
     // View initialization logic
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?{
-        val _binding = FragmentTaskManagerBinding.inflate(inflater,container,false)
-        val view = _binding.root
-        return view
+        binding = FragmentTaskManagerBinding.inflate(inflater,container,false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

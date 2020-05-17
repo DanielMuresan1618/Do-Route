@@ -1,4 +1,4 @@
-package com.example.doroute.view.task_manager
+package com.example.doroute.ui.view.task_manager
 
 import android.text.Editable
 import android.text.TextWatcher

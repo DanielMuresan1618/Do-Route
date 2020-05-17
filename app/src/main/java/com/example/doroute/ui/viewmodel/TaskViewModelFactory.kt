@@ -1,4 +1,4 @@
-package com.example.doroute.viewmodel
+package com.example.doroute.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

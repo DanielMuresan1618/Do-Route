@@ -1,10 +1,9 @@
-package com.example.doroute.viewmodel
+package com.example.doroute.ui.viewmodel
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.doroute.data.domain.Repository
 import com.example.doroute.data.models.LocationModel
-import java.net.Inet4Address
 
 class LocationViewModel(private val repository: Repository<LocationModel>) : ViewModel() {
     val locationsLiveData = MutableLiveData<List<LocationModel>>()

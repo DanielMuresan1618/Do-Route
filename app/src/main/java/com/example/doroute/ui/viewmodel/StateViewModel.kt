@@ -1,11 +1,9 @@
-package com.example.doroute.viewmodel
+package com.example.doroute.ui.viewmodel
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.doroute.data.domain.Repository
 import com.example.doroute.data.models.StateModel
-import com.example.doroute.data.models.TaskModel
-import java.util.*
 
 
 class StateViewModel(private val repository: Repository<StateModel>) : ViewModel() {
