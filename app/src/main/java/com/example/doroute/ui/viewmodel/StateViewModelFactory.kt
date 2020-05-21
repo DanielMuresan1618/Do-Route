@@ -3,10 +3,10 @@ package com.example.doroute.ui.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.doroute.data.domain.Repository
-import com.example.doroute.data.models.StateModel
+import com.example.doroute.data.models.TaskState
 
 class StateViewModelFactory(
-    private val repository: Repository<StateModel>
+    private val repository: Repository<TaskState>
 ) : ViewModelProvider.NewInstanceFactory() {
     //I need factories because I inject the repository argument to the viewmodel
 

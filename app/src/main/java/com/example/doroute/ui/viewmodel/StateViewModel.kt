@@ -3,11 +3,11 @@ package com.example.doroute.ui.viewmodel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.doroute.data.domain.Repository
-import com.example.doroute.data.models.StateModel
+import com.example.doroute.data.models.TaskState
 
 
-class StateViewModel(private val repository: Repository<StateModel>) : ViewModel() {
-    val statesLiveData = MutableLiveData<List<StateModel>>()
+class StateViewModel(private val repository: Repository<TaskState>) : ViewModel() {
+    val statesLiveData = MutableLiveData<List<TaskState>>()
 
     fun retrieveStates() {
         val states = repository.getAll()
@@ -15,15 +15,15 @@ class StateViewModel(private val repository: Repository<StateModel>) : ViewModel
     }
 
     fun addState(stateId: String, name: String) {
-        repository.add(StateModel(stateId,name))
+        repository.add(TaskState(stateId,name))
     }
 
 
-    fun removeState(state: StateModel) {
-        repository.remove(state)
+    fun removeState(taskState: TaskState) {
+        repository.remove(taskState)
     }
 
-    fun updateState(state: StateModel){
-        repository.update(state)
+    fun updateState(taskState: TaskState){
+        repository.update(taskState)
     }
 }

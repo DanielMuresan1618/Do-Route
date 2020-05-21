@@ -32,7 +32,7 @@
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
             android:layout_marginTop="36dp"
-            android:text="Places Project needs permission to acces device location to provide required services. Please allow the permission"/>
+            android:text="Places Project needs permission to acces device taskLocation to provide required services. Please allow the permission"/>
 
     </LinearLayout>
 

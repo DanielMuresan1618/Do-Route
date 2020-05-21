@@ -3,10 +3,10 @@ package com.example.doroute.ui.viewmodel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.doroute.data.domain.Repository
-import com.example.doroute.data.models.LocationModel
+import com.example.doroute.data.models.TaskLocation
 
-class LocationViewModel(private val repository: Repository<LocationModel>) : ViewModel() {
-    val locationsLiveData = MutableLiveData<List<LocationModel>>()
+class LocationViewModel(private val repository: Repository<TaskLocation>) : ViewModel() {
+    val locationsLiveData = MutableLiveData<List<TaskLocation>>()
 
     fun retrieveLocation() {
         val locations = repository.getAll()
@@ -14,14 +14,14 @@ class LocationViewModel(private val repository: Repository<LocationModel>) : Vie
     }
 
     fun addState(locationId: String,latitude:Double, longitude:Double, name: String, address: String) {
-        repository.add(LocationModel(locationId,latitude,longitude, name, address))
+        repository.add(TaskLocation(locationId,latitude,longitude, name, address))
     }
 
-    fun removeLocation(location: LocationModel) {
-        repository.remove(location)
+    fun removeLocation(taskLocation: TaskLocation) {
+        repository.remove(taskLocation)
     }
 
-    fun updateLocation(location: LocationModel) {
-        repository.update(location)
+    fun updateLocation(taskLocation: TaskLocation) {
+        repository.update(taskLocation)
     }
 }

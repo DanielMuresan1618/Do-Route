@@ -1,6 +1,6 @@
 package com.example.doroute.data.models
 
-data class LocationModel(
+data class TaskLocation(
      var locationId: String,
      var latitude: Double,
      var longitude: Double,

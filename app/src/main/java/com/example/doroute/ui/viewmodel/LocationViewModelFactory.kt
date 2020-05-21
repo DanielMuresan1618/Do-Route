@@ -3,10 +3,10 @@ package com.example.doroute.ui.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.doroute.data.domain.Repository
-import com.example.doroute.data.models.LocationModel
+import com.example.doroute.data.models.TaskLocation
 
 class LocationViewModelFactory(
-    private val repository: Repository<LocationModel>
+    private val repository: Repository<TaskLocation>
 ) : ViewModelProvider.NewInstanceFactory() {
     //I need factories because I inject the repository argument to the viewmodel
 
