@@ -49,7 +49,6 @@ class TaskManagerFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        requireActivity().findViewById<FloatingActionButton>(R.id.fab)?.setOnClickListener{addTask()}
         //View model
         val factory =
             TaskViewModelFactory(
@@ -87,10 +86,6 @@ class TaskManagerFragment : Fragment() {
     private fun update(task: TaskModel) {
         viewModel.updateTask(task)
 
-    }
-
-    private fun addTask(){
-        //viewModel.addTask(randomUUID().toString(),"locationId", "stateId","Titlee", "descriptionnn", Calendar.getInstance().time)
     }
 
     private fun delete(task: TaskModel){

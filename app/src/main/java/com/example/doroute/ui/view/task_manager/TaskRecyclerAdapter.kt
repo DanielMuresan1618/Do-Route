@@ -86,7 +86,7 @@ class TaskRecyclerAdapter(
             itemView.task_title.setText(task.title)
             itemView.task_description.setText(task.description)
             itemView.task_due_date.setText(task.dueDate.toString())
-            itemView.task_location.text = task.locationId
+            itemView.task_location.text = task.locatioName
             itemView.task_status.text = task.statusId
         }
     }
