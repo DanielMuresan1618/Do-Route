@@ -13,6 +13,9 @@ data class LocationEntity(
     @PrimaryKey
     val locationId:String,
 
+    @ColumnInfo(name="taskId")
+    var taskId: String,
+
     @ColumnInfo(name="latitude")
     var latitude: Double,
 

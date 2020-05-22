@@ -6,7 +6,7 @@ import com.example.doroute.data.domain.Repository
 import com.example.doroute.data.models.TaskModel
 
 class TaskViewModelFactory(
-    private val repository: Repository<TaskModel>
+    private val repository: Repository
 ) : ViewModelProvider.NewInstanceFactory() {
     //I need factories because I inject the repository argument to the viewmodel
 

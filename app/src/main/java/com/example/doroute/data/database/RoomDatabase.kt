@@ -3,7 +3,6 @@ import android.content.Context
 import androidx.room.Room
 
 object RoomDatabase { //singleton; only returns an AppDatabase
-    //will never be changed for this app!
     //I used fallbackToDestructiveMigration() to delete the previous db to avoid unnecessarily complex migration
     private var appDatabase: AppDatabase? = null
 

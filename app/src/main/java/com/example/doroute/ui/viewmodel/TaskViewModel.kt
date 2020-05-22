@@ -6,31 +6,29 @@ import com.example.doroute.data.models.TaskModel
 import com.example.doroute.data.domain.Repository
 import java.util.*
 
-class TaskViewModel(private val repository: Repository<TaskModel>) : ViewModel() {
+class TaskViewModel(private val repository: Repository) : ViewModel() {
     //1) Livedata
     val tasksLiveData = MutableLiveData<List<TaskModel>>() //all tasks from the RecyclerView
     val taskLiveData = MutableLiveData<TaskModel>() //the current task
 
     //2) Communication with the Repository
     fun retrieveTasks() {
-        val tasks = repository.getAll()
+        val tasks = repository.getAllTasks()
         tasksLiveData.postValue(tasks)
     }
 
-    fun addTask(taskId: String, locationId:String, statusId: String, title:String, description:String, dueDate:Date) {
-        repository.add(
-            TaskModel(taskId,locationId,statusId,title,description,dueDate)
-        )
+    fun addTask(task:TaskModel) {
+        repository.addTask(task)
         retrieveTasks()
     }
 
     fun removeTask(task: TaskModel) {
-        repository.remove(task)
+        repository.removeTask(task)
         retrieveTasks()
     }
 
     fun updateTask(task: TaskModel){
-        repository.update(task)
+        repository.updateTask(task)
         retrieveTasks()
     }
 }

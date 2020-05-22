@@ -22,11 +22,14 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.ViewModelProvider
 import com.example.doroute.R
+import com.example.doroute.data.database.RoomDatabase
+import com.example.doroute.data.domain.stores.TaskDbStore
 import com.example.doroute.data.models.ClusterMarker
 import com.example.doroute.data.models.PolylineData
-import com.example.doroute.data.models.TaskLocation
 import com.example.doroute.helpers.ClusterManagerRenderer
+import com.example.doroute.ui.viewmodel.*
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
@@ -56,6 +59,8 @@ import com.google.maps.model.DirectionsResult
 import com.mancj.materialsearchbar.MaterialSearchBar
 import com.mancj.materialsearchbar.MaterialSearchBar.OnSearchActionListener
 import com.mancj.materialsearchbar.adapter.SuggestionsAdapter
+import androidx.lifecycle.Observer
+import com.example.doroute.data.models.TaskModel
 import java.util.*
 
 
@@ -81,8 +86,9 @@ class MapsFragment : Fragment(),
     private var mSelectedMarker: Marker? = null
 
     //Model
-    private var mLastKnownLocation: Location? = null
-    private var mTaskLocations: List<TaskLocation>? = null
+    private var mLastKnownLocation: Location? = null //device's last known location
+    private var mTasks: List<TaskModel>? = null
+    private lateinit var taskViewModel: TaskViewModel
 
     //Places
     private lateinit var placeFields: List<Place.Field>
@@ -112,11 +118,22 @@ class MapsFragment : Fragment(),
         mapView!!.onCreate(savedInstanceState)
         mapView!!.onResume()
         mapView!!.getMapAsync(this) //therefore, onMapReady runs after onViewCreated
-        Places.initialize(requireActivity(), getString(R.string.mapsKey))
+        Places.initialize(requireContext(), getString(R.string.mapsKey))
         placesClient = Places.createClient(this.requireContext())
 
         mFusedLocationProviderClient =
-            LocationServices.getFusedLocationProviderClient(this.requireActivity())
+            LocationServices.getFusedLocationProviderClient(this.requireContext())
+        val taskFactory =
+            TaskViewModelFactory(
+                TaskDbStore(
+                    RoomDatabase.getDb(
+                        this.requireContext()
+                    )
+                )
+            )
+
+        taskViewModel = ViewModelProvider(this,taskFactory).get(TaskViewModel::class.java)
+
         initSearchBar()
     }
 
@@ -138,7 +155,6 @@ class MapsFragment : Fragment(),
         val activity = requireActivity()
 
         mClusterManager = ClusterManager<ClusterMarker>(activity, mMap)
-        addMapMarkers()
         mMap!!.setOnPolylineClickListener(this)
         mClusterManager = ClusterManager<ClusterMarker>(activity, mMap)
         mClusterManagerRenderer = ClusterManagerRenderer(activity, mMap, mClusterManager)
@@ -146,6 +162,10 @@ class MapsFragment : Fragment(),
 
         findMyLocationButton()
         locationSettingRequest(activity)
+
+        taskViewModel.tasksLiveData.observe(viewLifecycleOwner, Observer {
+            addMapMarkers()
+        })
 
         mMap!!.setOnMyLocationButtonClickListener {
             if (materialSearchBar.isSuggestionsVisible) materialSearchBar.clearSuggestions()
@@ -260,10 +280,10 @@ class MapsFragment : Fragment(),
     private fun setCameraView(i: Int) {
 
         // Set a boundary to start
-        val bottomBoundary: Double = mTaskLocations?.get(i)!!.latitude - .1
-        val leftBoundary: Double = mTaskLocations?.get(i)!!.longitude - .1
-        val topBoundary: Double = mTaskLocations?.get(i)!!.latitude + .1
-        val rightBoundary: Double = mTaskLocations?.get(i)!!.longitude + .1
+        val bottomBoundary: Double = mTasks?.get(i)!!.latitude - .1
+        val leftBoundary: Double = mTasks?.get(i)!!.longitude - .1
+        val topBoundary: Double = mTasks?.get(i)!!.latitude + .1
+        val rightBoundary: Double = mTasks?.get(i)!!.longitude + .1
         val mMapBoundary = LatLngBounds(
             LatLng(bottomBoundary, leftBoundary),
             LatLng(topBoundary, rightBoundary)
@@ -289,58 +309,45 @@ class MapsFragment : Fragment(),
 
     //Markers
 
-    //TODO: apply viewmodels/ repository calls to this method
     private fun addMapMarkers() {
         resetMap()
         mMap!!.setOnInfoWindowClickListener(this)
-        mTaskLocations?.forEach { taskLocation ->
-            Log.d(TAG, "addMapMarkers: location: " + taskLocation.locationId)
-
-            val snippet = if (taskLocation.locationId
-                    .equals(FirebaseAuth.getInstance().getUid())
-            ) {
-                "This is you"
-            } else {
-                "Determine route to " + userLocation.getUser().getUsername()
-                    .toString() + "?"
-            }
+        mTasks?.forEach { task ->
+            Log.d(TAG, "addMapMarkers: location: " + task.locatioName)
+            val snippet = "Determine route to the task ${task.title} ?"
             val avatar: Int = R.drawable.ic_android_black_10dp // set the default avatar
-
             val newClusterMarker = ClusterMarker(
-                LatLng(
-                    userLocation.getGeo_point().getLatitude(),
-                    userLocation.getGeo_point().getLongitude()
-                ),
-                userLocation.getUser().getUsername(),
+                LatLng(task.latitude, task.longitude),
+                task.title,
                 snippet,
                 avatar,
-                userLocation.getUser()
+                task
             )
-            mClusterManager!!.addItem(newClusterMarker)
+            mClusterManager?.addItem(newClusterMarker)
             mClusterMarkers?.add(newClusterMarker)
 
         }
-        mClusterManager!!.cluster()
-        setCameraView()
-
+        mClusterManager?.cluster()
+       // setCameraView()
     }
 
-    //TODO: apply viewmodels/ repository calls to this method
+
     private fun calculateDirections(marker: Marker) {
         val directions = DirectionsApiRequest(mGeoApiContext)
-
+        if (mLastKnownLocation == null)
+            getDeviceLocation() // it's not async. This method will not return until i have a location
         with(directions) {
             alternatives(true)
-            destination(
+            destination( //task destination
                 com.google.maps.model.LatLng(
                     marker.position.latitude,
                     marker.position.longitude
                 )
             )
-            origin(
+            origin(//my location
                 com.google.maps.model.LatLng(
-                    mTaskLocation!!.latitude,
-                    mTaskLocation!!.longitude
+                    mLastKnownLocation!!.latitude,
+                    mLastKnownLocation!!.longitude
                 )
             )
             setCallback(object : PendingResult.Callback<DirectionsResult?> {

@@ -11,12 +11,6 @@ data class TaskEntity(
     @PrimaryKey
     val taskId: String,
 
-    @ColumnInfo(name = "locationId")
-    val locationId: String,
-
-    @ColumnInfo(name = "stateId")
-    val statusId: String,
-
     @ColumnInfo(name = "title")
     val title: String,
 

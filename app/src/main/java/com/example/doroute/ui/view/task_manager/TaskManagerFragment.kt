@@ -49,7 +49,7 @@ class TaskManagerFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        activity?.findViewById<FloatingActionButton>(R.id.fab)?.setOnClickListener{addTask()}
+        requireActivity().findViewById<FloatingActionButton>(R.id.fab)?.setOnClickListener{addTask()}
         //View model
         val factory =
             TaskViewModelFactory(
@@ -90,7 +90,7 @@ class TaskManagerFragment : Fragment() {
     }
 
     private fun addTask(){
-        viewModel.addTask(randomUUID().toString(),"locationId", "stateId","Titlee", "descriptionnn", Calendar.getInstance().time)
+        //viewModel.addTask(randomUUID().toString(),"locationId", "stateId","Titlee", "descriptionnn", Calendar.getInstance().time)
     }
 
     private fun delete(task: TaskModel){

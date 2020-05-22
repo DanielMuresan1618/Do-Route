@@ -9,6 +9,9 @@ data class StateEntity (
     @PrimaryKey
     val stateId: String,
 
+    @ColumnInfo(name="taskId")
+    var taskId: String,
+
     @ColumnInfo(name="name")
     val name:String
 )

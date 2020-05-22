@@ -8,5 +8,10 @@ data class TaskModel (
     var statusId: String,
     var title: String,
     var description: String,
-    var dueDate: Date
+    var dueDate: Date,
+    var latitude: Double,
+    var longitude: Double,
+    var locatioName: String,
+    var address: String,
+    var taskState: String
 )
