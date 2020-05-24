@@ -6,13 +6,14 @@ import android.content.Context
 
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.example.doroute.R
 import com.example.doroute.data.models.TaskModel
+import com.example.doroute.helpers.TaskStates
 import kotlinx.android.synthetic.main.task.view.*
 import java.util.*
 
@@ -54,14 +55,13 @@ class TaskRecyclerAdapter(
     inner class TaskViewHolder(
         itemView:  View
     ): RecyclerView.ViewHolder(itemView){
-
+       private val now = Calendar.getInstance() //this moment
+       private var isAutomaticallyChanged = false
         init {
-            itemView.task_delete.setOnClickListener{onDeleteClick(tasks[adapterPosition])}
 
+            itemView.task_delete.setOnClickListener{onDeleteClick(tasks[adapterPosition])}
             itemView.task_title.setOnFocusChangeListener(this::onFocuseChange)
             itemView.task_description.setOnFocusChangeListener(this::onFocuseChange)
-            itemView.task_status.setOnFocusChangeListener(this::onFocuseChange)
-
             itemView.task_description.addTextChangedListener(object : TextWatcher{
                 override fun afterTextChanged(s: Editable?) {
                     editingFinished=true
@@ -81,27 +81,6 @@ class TaskRecyclerAdapter(
 
                 }
             })
-
-            itemView.task_status.addTextChangedListener(object : TextWatcher{
-                override fun afterTextChanged(s: Editable?) {
-                    editingFinished=true
-                    tasks[adapterPosition].taskState = itemView.task_status.text.toString()
-                }
-
-                override fun beforeTextChanged(
-                    s: CharSequence?,
-                    start: Int,
-                    count: Int,
-                    after: Int
-                ) {
-
-                }
-
-                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-
-                }
-            })
-
             itemView.task_title.addTextChangedListener(object : TextWatcher{
                 override fun afterTextChanged(s: Editable?) {
                     editingFinished=true
@@ -122,12 +101,24 @@ class TaskRecyclerAdapter(
                 }
             })
             itemView.task_due_date.setOnClickListener(this::scheduleTask)
-
+            itemView.taskCheckbox.setOnClickListener{
+                //setOnCheckedChangeListener IS GARBAGE!!!!!!
+                if (!itemView.taskCheckbox.isChecked) {
+                    if (tasks[adapterPosition].dueDate.before(now.time))
+                        tasks[adapterPosition].status = TaskStates.OVERDUE
+                    else
+                        tasks[adapterPosition].status = TaskStates.PENDING
+                } else
+                    tasks[adapterPosition].status = TaskStates.COMPLETE
+                Log.i(TAG,"${itemView.taskCheckbox.isChecked} , ${tasks[adapterPosition].checkboxChecked}")
+                tasks[adapterPosition].checkboxChecked = itemView.taskCheckbox.isChecked
+                onUpdate(tasks[adapterPosition]) //onUpdate created a lot of problems...
+              //  button.isChecked = !isChecked
+            }
 
         }
 
         private fun scheduleTask(itemView: View) {
-            val now = Calendar.getInstance() //this moment
             val selectedCalendar: Calendar =
                 Calendar.getInstance() // variable to collect custom date and time
             val datePicker = DatePickerDialog(
@@ -163,7 +154,6 @@ class TaskRecyclerAdapter(
             datePicker.show()
         }
 
-
         private fun onFocuseChange(view:View, hasFocus:Boolean){
             if (!hasFocus && editingFinished){
                 editingFinished = false
@@ -175,8 +165,14 @@ class TaskRecyclerAdapter(
             itemView.task_title.setText(task.title)
             itemView.task_description.setText(task.description)
             itemView.task_due_date.setText(task.dueDate.toString())
-            itemView.task_location.text = task.locatioName
-            itemView.task_status.text = task.taskState
+            itemView.task_location.text = task.locationName
+            itemView.taskCheckbox.isChecked = task.checkboxChecked
+
+            when(task.status){
+                TaskStates.COMPLETE -> itemView.task_status.setImageResource(R.drawable.ic_done_green_24dp)
+                TaskStates.PENDING -> itemView.task_status.setImageResource(R.drawable.ic_pending_yellow_24dp)
+                TaskStates.OVERDUE -> itemView.task_status.setImageResource(R.drawable.ic_overdue_red_24dp)
+            }
         }
     }
 }

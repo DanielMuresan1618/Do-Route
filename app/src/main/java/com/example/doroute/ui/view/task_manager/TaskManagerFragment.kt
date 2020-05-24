@@ -83,6 +83,7 @@ class TaskManagerFragment : Fragment() {
                )
             recycler_view.adapter = taskAdapter
         })
+        recycler_view.setNestedScrollingEnabled(false);
         viewModel.retrieveTasks()
     }
 

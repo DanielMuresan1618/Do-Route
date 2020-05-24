@@ -14,125 +14,88 @@
         android:focusable="true"
         android:focusableInTouchMode="true">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/upper_group"
-            android:layout_width="match_parent"
+        <CheckBox
+            android:id="@+id/taskCheckbox"
+            android:layout_width="26dp"
+            android:layout_height="22dp"
+            android:layout_marginTop="16dp"
+            app:layout_constraintEnd_toStartOf="@+id/task_title"
+            app:layout_constraintStart_toEndOf="@+id/task_delete"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <EditText
+            android:id="@+id/task_title"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            app:layout_constraintBottom_toTopOf="@+id/lower_group"
+
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:text="Task Title"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/taskCheckbox"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/task_location"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:text="Location"
+            app:layout_constraintBottom_toTopOf="@+id/task_description"
+            app:layout_constraintEnd_toStartOf="@+id/task_due_date"
+            app:layout_constraintStart_toStartOf="@+id/task_title"
+            app:layout_constraintTop_toBottomOf="@+id/task_title"
+            app:layout_constraintVertical_bias="1.0" />
+
+        <ImageButton
+            android:id="@+id/task_delete"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_delete_forever_black_24dp" />
 
-            <CheckBox
-                android:id="@+id/radioButton"
-                android:layout_width="wrap_content"
-                android:layout_height="20dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/task_title"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.24000001" />
-
-            <EditText
-                android:id="@+id/task_title"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-
-                android:layout_marginTop="1dp"
-                android:layout_marginBottom="1dp"
-                android:ems="10"
-                android:inputType="textPersonName"
-                android:text="Task Title"
-                app:layout_constraintBottom_toTopOf="@+id/task_location"
-                app:layout_constraintEnd_toEndOf="@id/task_delete"
-                app:layout_constraintStart_toEndOf="@id/radioButton"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/task_location"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="56dp"
-                android:layout_marginEnd="32dp"
-                android:text="Location"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/task_title" />
-
-            <ImageButton
-                android:id="@+id/task_delete"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="32dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/task_title"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_delete_forever_black_24dp" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/lower_group"
-            android:layout_width="match_parent"
+        <EditText
+            android:id="@+id/task_description"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="56dp"
-            android:layout_marginEnd="32dp"
-            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="16dp"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:text="Task Description"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/upper_group">
+            app:layout_constraintStart_toStartOf="@+id/task_title" />
 
-            <EditText
-                android:id="@+id/task_description"
-                android:layout_width="0dp"
-                android:layout_height="77dp"
-                android:layout_marginTop="1dp"
-                android:layout_marginEnd="110dp"
-                android:layout_marginBottom="1dp"
-                android:ems="10"
-                android:inputType="textPersonName"
-                android:text="Task Description"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.9" />
+        <ImageView
+            android:id="@+id/task_status"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="28dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/taskCheckbox"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="@+id/task_delete"
+            app:layout_constraintTop_toBottomOf="@+id/taskCheckbox"
+            app:srcCompat="@drawable/ic_close_black_48dp" />
 
-            <EditText
-                android:id="@+id/task_due_date"
-                android:layout_width="0dp"
-                android:layout_height="34dp"
-                android:layout_marginStart="1dp"
-                android:layout_marginEnd="50dp"
-                android:ems="10"
-                android:inputType="date"
-                android:text="02/05/2020"
-                android:textSize="10sp"
-                app:layout_constraintBottom_toTopOf="@+id/task_status"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/task_description"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/task_status"
-                android:layout_width="0dp"
-                android:layout_height="28dp"
-                android:layout_marginStart="1dp"
-                android:layout_marginEnd="50dp"
-                android:text="TextView"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.48"
-                app:layout_constraintStart_toEndOf="@+id/task_description"
-                app:layout_constraintTop_toBottomOf="@+id/task_due_date" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        <EditText
+            android:id="@+id/task_due_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:ems="10"
+            android:inputType="date"
+            android:text="02/05/2020"
+            android:textSize="10sp"
+            app:layout_constraintBottom_toTopOf="@+id/task_description"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/task_title"
+            app:layout_constraintVertical_bias="0.0" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -11,10 +11,5 @@ data class FullTaskEntity(
         parentColumn = "taskId",
         entityColumn = "taskId"
     )
-    val location: LocationEntity,
-    @Relation(
-        parentColumn = "taskId",
-        entityColumn = "taskId"
-    )
-    val state: StateEntity
+    val location: LocationEntity
     )

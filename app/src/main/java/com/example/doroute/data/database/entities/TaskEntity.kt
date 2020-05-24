@@ -18,7 +18,13 @@ data class TaskEntity(
     val description: String,
 
     @ColumnInfo(name = "due_date")
-    val dueDate: Date
+    val dueDate: Date,
+
+    @ColumnInfo(name = "status")
+    val status: Int,
+
+    @ColumnInfo(name = "checked")
+    val checked: Boolean
 )
 
 

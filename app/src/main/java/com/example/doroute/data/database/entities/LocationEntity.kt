@@ -23,8 +23,5 @@ data class LocationEntity(
     var longitude: Double,
 
     @ColumnInfo(name="name")
-    var name: String,
-
-    @ColumnInfo(name="address")
-    var address: String
+    var name: String
 )

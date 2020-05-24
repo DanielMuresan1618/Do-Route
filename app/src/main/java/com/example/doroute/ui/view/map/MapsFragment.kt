@@ -1,6 +1,5 @@
 package com.example.doroute.ui.view.map
 
-import android.Manifest
 import android.app.Activity.RESULT_OK
 import android.app.AlertDialog
 import android.content.Context.INPUT_METHOD_SERVICE
@@ -31,6 +30,7 @@ import com.example.doroute.data.models.ClusterMarker
 import com.example.doroute.data.models.PolylineData
 import com.example.doroute.data.models.TaskModel
 import com.example.doroute.helpers.ClusterManagerRenderer
+import com.example.doroute.helpers.TaskStates
 import com.example.doroute.ui.viewmodel.TaskViewModel
 import com.example.doroute.ui.viewmodel.TaskViewModelFactory
 import com.google.android.gms.common.api.ApiException
@@ -146,8 +146,7 @@ class MapsFragment : Fragment(),
     }
 
     private fun addTask() {
-        val taskModel = TaskModel(
-            randomUUID().toString(),
+        var taskModel = TaskModel(
             randomUUID().toString(),
             randomUUID().toString(),
             "ceva",
@@ -156,9 +155,37 @@ class MapsFragment : Fragment(),
             mLastKnownLocation!!.latitude + 1,
             mLastKnownLocation!!.longitude + 1,
             "undeva",
-            "adresa",
-            "statettt"
+            TaskStates.PENDING,
+            false
             )
+        taskViewModel.addTask(taskModel)
+        taskModel = TaskModel(
+            randomUUID().toString(),
+            randomUUID().toString(),
+            "ceva",
+            "da",
+            Calendar.getInstance().time,
+            mLastKnownLocation!!.latitude + 1,
+            mLastKnownLocation!!.longitude + 1,
+            "undeva",
+            TaskStates.PENDING,
+            false
+        )
+        taskModel.status= TaskStates.OVERDUE
+        taskViewModel.addTask(taskModel)
+        taskModel =TaskModel(
+            randomUUID().toString(),
+            randomUUID().toString(),
+            "ceva",
+            "da",
+            Calendar.getInstance().time,
+            mLastKnownLocation!!.latitude + 1,
+            mLastKnownLocation!!.longitude + 1,
+            "undeva",
+            TaskStates.PENDING,
+            false
+        )
+        taskModel.status = TaskStates.PENDING
         taskViewModel.addTask(taskModel)
     }
 
@@ -337,7 +364,7 @@ class MapsFragment : Fragment(),
         resetMap()
         mMap!!.setOnInfoWindowClickListener(this)
         mTasks?.forEach { task ->
-            Log.d(TAG, "addMapMarkers: location: " + task.locatioName)
+            Log.d(TAG, "addMapMarkers: location: " + task.locationName)
             val snippet = "Determine route to this task?"
             val avatar: Int = R.drawable.ic_android_black_10dp // set the default avatar
             val newClusterMarker = ClusterMarker(

@@ -3,7 +3,6 @@ package com.example.doroute.data.domain.stores
 import com.example.doroute.data.database.AppDatabase
 import com.example.doroute.data.database.entities.FullTaskEntity
 import com.example.doroute.data.database.entities.LocationEntity
-import com.example.doroute.data.database.entities.StateEntity
 import com.example.doroute.data.database.entities.TaskEntity
 import com.example.doroute.data.models.TaskModel
 import com.example.doroute.data.domain.Repository
@@ -20,40 +19,37 @@ class TaskDbStore(private val appDatabase: AppDatabase) : Repository {
     }
 
     override fun addTask(t: TaskModel) {
-        appDatabase.taskDao().insertTask(t.getTask(), t.getLocation(), t.getState()
-        )
+        appDatabase.taskDao().insertTask(t.getTask(), t.getLocation())
     }
 
     override fun removeTask(t: TaskModel) {
-        appDatabase.taskDao().deleteTask(t.getTask(), t.getLocation(), t.getState())
+        appDatabase.taskDao().deleteTask(t.getTask(), t.getLocation())
     }
 
     override fun updateTask(t: TaskModel) {
-        appDatabase.taskDao().updateTask(t.getTask(), t.getLocation(), t.getState())
+        appDatabase.taskDao().updateTask(t.getTask(), t.getLocation())
     }
 
     private fun TaskModel.getTask() =
-        TaskEntity(taskId, title, description, dueDate)
+        TaskEntity(taskId, title, description, dueDate, status, checkboxChecked)
 
     private fun TaskModel.getLocation() =
-        LocationEntity(locationId, taskId, latitude, longitude, locatioName, address)
+        LocationEntity(locationId, taskId, latitude, longitude, locationName)
 
-    private fun TaskModel.getState() = StateEntity(statusId, taskId, taskState)
 
 
     private fun FullTaskEntity.toDomainModel() =
         TaskModel(
             task.taskId,
             location.locationId,
-            state.stateId,
             task.title,
             task.description,
             task.dueDate,
             location.latitude,
             location.longitude,
             location.name,
-            location.address,
-            state.name
+            task.status,
+            task.checked
         )
 
     companion object {

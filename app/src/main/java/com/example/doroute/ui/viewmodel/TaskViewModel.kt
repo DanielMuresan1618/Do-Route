@@ -4,6 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.doroute.data.models.TaskModel
 import com.example.doroute.data.domain.Repository
+import com.example.doroute.helpers.TaskStates
 import java.util.*
 
 class TaskViewModel(private val repository: Repository) : ViewModel() {
