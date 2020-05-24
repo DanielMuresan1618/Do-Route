@@ -77,7 +77,6 @@ class MapsFragment : Fragment(),
     //Map
     private var mMap: GoogleMap? = null
     private var mapView: MapView? = null
-    private var mapReady: Boolean = false
     private var mGeoApiContext: GeoApiContext? = null
     private var mFusedLocationProviderClient: FusedLocationProviderClient? = null
 
@@ -94,7 +93,6 @@ class MapsFragment : Fragment(),
     private lateinit var taskViewModel: TaskViewModel
 
     //Places
-    private lateinit var placeFields: List<Place.Field>
     private var predictionList: List<AutocompletePrediction>? = null
     private lateinit var placesClient: PlacesClient
 
@@ -141,8 +139,8 @@ class MapsFragment : Fragment(),
                 )
             )
 
-        taskViewModel = ViewModelProvider(this,taskFactory).get(TaskViewModel::class.java)
-
+        //attach the viewmodel to the activity, not the fragment, to prevent memory leak
+        taskViewModel = requireActivity().let{ViewModelProvider(this,taskFactory).get(TaskViewModel::class.java) }
         requireActivity().findViewById<FloatingActionButton>(R.id.fab)?.setOnClickListener{addTask()}
         initSearchBar()
     }
@@ -154,7 +152,7 @@ class MapsFragment : Fragment(),
             randomUUID().toString(),
             "ceva",
             "da",
-            Date(23423423),
+            Calendar.getInstance().time,
             mLastKnownLocation!!.latitude + 1,
             mLastKnownLocation!!.longitude + 1,
             "undeva",
@@ -627,14 +625,6 @@ class MapsFragment : Fragment(),
 
     companion object {
         private const val TAG = "MapFragment"
-        private const val FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION
-        private const val COARSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION
-        private const val LOCATION_PERMISSION_REQUEST_CODE = 1234
         private const val DEFAULT_ZOOM = 15f
-        private const val PLACE_PICKER_REQUEST = 1
-        private val LAT_LNG_BOUNDS = LatLngBounds(
-            LatLng(-40.0, -168.0),
-            LatLng(71.0, 136.0)
-        )
     }
 }

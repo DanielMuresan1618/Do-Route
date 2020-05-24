@@ -8,8 +8,7 @@ import java.util.*
 
 class TaskViewModel(private val repository: Repository) : ViewModel() {
     //1) Livedata
-    val tasksLiveData = MutableLiveData<List<TaskModel>>() //all tasks from the RecyclerView
-    val taskLiveData = MutableLiveData<TaskModel>() //the current task
+    val tasksLiveData = MutableLiveData<List<TaskModel>>()
 
     //2) Communication with the Repository
     fun retrieveTasks() {

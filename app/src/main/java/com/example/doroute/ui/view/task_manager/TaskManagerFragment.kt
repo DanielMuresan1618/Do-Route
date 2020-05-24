@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.doroute.R
 import com.example.doroute.data.database.RoomDatabase
 import com.example.doroute.data.domain.stores.TaskDbStore
@@ -50,7 +51,7 @@ class TaskManagerFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         //View model
-        val factory =
+        val taskFactory =
             TaskViewModelFactory(
                 TaskDbStore(
                     RoomDatabase.getDb(
@@ -58,7 +59,7 @@ class TaskManagerFragment : Fragment() {
                     )
                 )
             )
-        viewModel = ViewModelProvider(this,factory).get(TaskViewModel::class.java) //.of(this) is deprecated
+        viewModel = requireActivity().let{ViewModelProvider(this,taskFactory).get(TaskViewModel::class.java) } //.of(this) is deprecated
 
 
         //Recycler view
@@ -71,9 +72,11 @@ class TaskManagerFragment : Fragment() {
         recycler_view.apply {
             layoutManager = LinearLayoutManager(this@TaskManagerFragment.requireContext())
         }
+        recycler_view.addItemDecoration(TaskItemDecoration(resources.getDimension(R.dimen.task_management_items_margin).toInt()))
         viewModel.tasksLiveData.observe(viewLifecycleOwner, Observer {
            taskAdapter=
                TaskRecyclerAdapter(
+                   requireActivity(),
                    it,
                    this::delete,
                    this::update

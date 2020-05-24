@@ -7,4 +7,5 @@
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="custom_marker_image">16dp</dimen>
     <dimen name="custom_marker_padding">16dp</dimen>
+    <dimen name="task_management_items_margin">16dp</dimen>
 </resources>

@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     app:cardCornerRadius="2dp"
     app:cardElevation="10dp"
-    app:cardPreventCornerOverlap="false">
+    app:cardPreventCornerOverlap="true">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -18,52 +18,59 @@
             android:id="@+id/upper_group"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
             app:layout_constraintBottom_toTopOf="@+id/lower_group"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
+            <CheckBox
+                android:id="@+id/radioButton"
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/task_title"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.24000001" />
+
             <EditText
                 android:id="@+id/task_title"
                 android:layout_width="0dp"
-                android:layout_height="42dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+
                 android:layout_marginTop="1dp"
+                android:layout_marginBottom="1dp"
                 android:ems="10"
                 android:inputType="textPersonName"
                 android:text="Task Title"
-
-                app:layout_constraintEnd_toStartOf="@+id/task_delete"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/task_location"
+                app:layout_constraintEnd_toEndOf="@id/task_delete"
+                app:layout_constraintStart_toEndOf="@id/radioButton"
                 app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/task_date_created"
-                android:layout_width="100dp"
-                android:layout_height="18dp"
-                android:text="Date Created"
-                app:layout_constraintBottom_toBottomOf="@+id/task_title"
-                app:layout_constraintEnd_toEndOf="@+id/task_title"
-                app:layout_constraintTop_toTopOf="@+id/task_title" />
 
             <TextView
                 android:id="@+id/task_location"
                 android:layout_width="0dp"
-                android:layout_height="28dp"
-                android:layout_marginTop="1dp"
-                android:layout_marginEnd="50dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="56dp"
+                android:layout_marginEnd="32dp"
                 android:text="Location"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/task_title" />
 
             <ImageButton
                 android:id="@+id/task_delete"
-                android:layout_width="48dp"
-                android:layout_height="41dp"
-                android:layout_marginEnd="50dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="32dp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toEndOf="@+id/task_title"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/ic_delete_forever_black_24dp" />
@@ -74,6 +81,9 @@
             android:id="@+id/lower_group"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginStart="56dp"
+            android:layout_marginEnd="32dp"
+            android:layout_marginBottom="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
