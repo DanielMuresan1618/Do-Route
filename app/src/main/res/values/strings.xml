@@ -1,5 +1,6 @@
 <resources>
 
+    <string name="application_name">DoRoute</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="action_settings">Settings</string>
@@ -14,4 +15,6 @@
     <string name="menu_schedules">Schedules</string>
     <string name="task_manager_title">Task Manager</string>
     <string name="title_activity_test">Map</string>
+    <string name="group_notification_for">This is the %s notification group.</string>
+    <string name="action_execute_task">com.example.doroute.action.TASK_DONE</string>
 </resources>

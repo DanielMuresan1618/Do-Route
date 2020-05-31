@@ -14,4 +14,17 @@ data class TaskModel (
     var locationName: String,
     var status: Int,
     var checkboxChecked: Boolean = false
-)
+){
+    companion object {
+        const val TASKID = "taskId"
+        const val LOCATIONID = "locationId"
+        const val TITLE = "title"
+        const val DESCRIPTION = "description"
+        const val DUEDATE = "dueDate"
+        const val LATITUDE = "latitude"
+        const val LONGITUDE = "longitude"
+        const val LOCATIONNAME = "locationName"
+        const val STATUS = "status"
+        const val CHECKBOXCHECKED = "checkboxChecked"
+    }
+}

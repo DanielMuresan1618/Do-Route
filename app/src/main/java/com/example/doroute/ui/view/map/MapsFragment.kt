@@ -134,7 +134,7 @@ class MapsFragment : Fragment(),
             TaskViewModelFactory(
                 TaskDbStore(
                     RoomDatabase.getDb(
-                        this.requireContext()
+                        requireContext()
                     )
                 )
             )
@@ -155,7 +155,7 @@ class MapsFragment : Fragment(),
             mLastKnownLocation!!.latitude + 1,
             mLastKnownLocation!!.longitude + 1,
             "undeva",
-            TaskStates.PENDING,
+            TaskStates.OVERDUE,
             false
             )
         taskViewModel.addTask(taskModel)
@@ -168,7 +168,7 @@ class MapsFragment : Fragment(),
             mLastKnownLocation!!.latitude + 1,
             mLastKnownLocation!!.longitude + 1,
             "undeva",
-            TaskStates.PENDING,
+            TaskStates.OVERDUE,
             false
         )
         taskModel.status= TaskStates.OVERDUE
@@ -182,10 +182,9 @@ class MapsFragment : Fragment(),
             mLastKnownLocation!!.latitude + 1,
             mLastKnownLocation!!.longitude + 1,
             "undeva",
-            TaskStates.PENDING,
+            TaskStates.OVERDUE,
             false
         )
-        taskModel.status = TaskStates.PENDING
         taskViewModel.addTask(taskModel)
     }
 

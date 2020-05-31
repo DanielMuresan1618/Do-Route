@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.doroute.R
 import com.example.doroute.data.models.TaskModel
 import com.example.doroute.helpers.TaskStates
+import com.example.doroute.reminders.AlarmScheduler
 import kotlinx.android.synthetic.main.task.view.*
 import java.util.*
 
@@ -52,13 +53,10 @@ class TaskRecyclerAdapter(
     }
 
 
-    inner class TaskViewHolder(
-        itemView:  View
-    ): RecyclerView.ViewHolder(itemView){
-       private val now = Calendar.getInstance() //this moment
-       private var isAutomaticallyChanged = false
+    inner class TaskViewHolder(itemView:  View): RecyclerView.ViewHolder(itemView){
+       private lateinit var now: Calendar
         init {
-
+            now = Calendar.getInstance(Locale.getDefault())
             itemView.task_delete.setOnClickListener{onDeleteClick(tasks[adapterPosition])}
             itemView.task_title.setOnFocusChangeListener(this::onFocuseChange)
             itemView.task_description.setOnFocusChangeListener(this::onFocuseChange)
@@ -101,21 +99,23 @@ class TaskRecyclerAdapter(
                 }
             })
             itemView.task_due_date.setOnClickListener(this::scheduleTask)
-            itemView.taskCheckbox.setOnClickListener{
-                //setOnCheckedChangeListener IS GARBAGE!!!!!!
-                if (!itemView.taskCheckbox.isChecked) {
-                    if (tasks[adapterPosition].dueDate.before(now.time))
-                        tasks[adapterPosition].status = TaskStates.OVERDUE
-                    else
-                        tasks[adapterPosition].status = TaskStates.PENDING
-                } else
-                    tasks[adapterPosition].status = TaskStates.COMPLETE
-                Log.i(TAG,"${itemView.taskCheckbox.isChecked} , ${tasks[adapterPosition].checkboxChecked}")
-                tasks[adapterPosition].checkboxChecked = itemView.taskCheckbox.isChecked
+            itemView.taskCheckbox.setOnClickListener{view ->
+                tasks[adapterPosition].checkboxChecked = !tasks[adapterPosition].checkboxChecked
+                setStatusForTask()
                 onUpdate(tasks[adapterPosition]) //onUpdate created a lot of problems...
-              //  button.isChecked = !isChecked
             }
+        }
 
+        private fun setStatusForTask() {
+            //setOnCheckedChangeListener IS GARBAGE!!!!!!
+            now = Calendar.getInstance(Locale.getDefault())
+            if (!tasks[adapterPosition].checkboxChecked) {
+                if (tasks[adapterPosition].dueDate.before(now.time))
+                    tasks[adapterPosition].status = TaskStates.OVERDUE
+                else
+                    tasks[adapterPosition].status = TaskStates.PENDING
+            } else
+                tasks[adapterPosition].status = TaskStates.COMPLETE
         }
 
         private fun scheduleTask(itemView: View) {
@@ -134,11 +134,16 @@ class TaskRecyclerAdapter(
                             //... I can simulate an async behavior by using only the flow logic...
                             selectedCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay)
                             selectedCalendar.set(Calendar.MINUTE, minute)
+                            selectedCalendar.set(Calendar.SECOND,0)
+                            selectedCalendar.set(Calendar.MILLISECOND,0)
                             //...thus updating the UI correctly...
-                            itemView.task_due_date.setText(selectedCalendar.time.toString())
+                            itemView.task_due_date.text = selectedCalendar.time.toString()
                             //this will update the db too
                             tasks[adapterPosition].dueDate = selectedCalendar.time
-                            onUpdate(tasks[adapterPosition])
+                            setStatusForTask()
+                            onUpdate(tasks[adapterPosition]) //onUpdate created a lot of problems...
+                            //and set up the alarm
+                            AlarmScheduler.updateAlarmsForReminder(context,tasks[adapterPosition])
                         },
                         now.get(Calendar.HOUR_OF_DAY),
                         now.get(Calendar.MINUTE),
@@ -164,14 +169,14 @@ class TaskRecyclerAdapter(
         fun bind(task: TaskModel){
             itemView.task_title.setText(task.title)
             itemView.task_description.setText(task.description)
-            itemView.task_due_date.setText(task.dueDate.toString())
+            itemView.task_due_date.text = task.dueDate.toString()
             itemView.task_location.text = task.locationName
             itemView.taskCheckbox.isChecked = task.checkboxChecked
 
             when(task.status){
                 TaskStates.COMPLETE -> itemView.task_status.setImageResource(R.drawable.ic_done_green_24dp)
-                TaskStates.PENDING -> itemView.task_status.setImageResource(R.drawable.ic_pending_yellow_24dp)
                 TaskStates.OVERDUE -> itemView.task_status.setImageResource(R.drawable.ic_overdue_red_24dp)
+                TaskStates.PENDING -> itemView.task_status.setImageResource(R.drawable.ic_pending_yellow_24dp)
             }
         }
     }

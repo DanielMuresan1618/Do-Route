@@ -10,7 +10,11 @@
     -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
+    <!-- Need to receive a broadcast when the system reboots -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+
     <application
+        android:name=".DoRoute"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="DoRoute"
@@ -37,6 +41,18 @@
             android:name=".ui.view.task_manager.TaskManagerFragment"
             android:label="@string/menu_schedules"
             android:theme="@style/AppTheme.NoActionBar" />
+        <!-- Global Broadcast Receiver -->
+        <receiver android:name=".AppGlobalReceiver"/>
+
+        <!-- For retrieving the broadcast sent by the system when the alarm is triggered -->
+        <receiver android:name=".reminders.AlarmReceiver" />
+
+        <!-- For listening to device reboot to reschedule alarms -->
+        <receiver android:name=".reminders.BootReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

@@ -8,7 +8,7 @@ object RoomDatabase { //singleton; only returns an AppDatabase
 
     fun getDb(context: Context): AppDatabase {
         if (appDatabase == null)
-            appDatabase = Room.databaseBuilder(context, AppDatabase::class.java, "doroute-db")
+            appDatabase = Room.databaseBuilder(context.applicationContext, AppDatabase::class.java, "doroute-db")
                 .fallbackToDestructiveMigration()
                 .allowMainThreadQueries()
                 .build()

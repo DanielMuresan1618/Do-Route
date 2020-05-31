@@ -40,7 +40,7 @@
         <TextView
             android:id="@+id/task_location"
             android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
             android:text="Location"
             app:layout_constraintBottom_toTopOf="@+id/task_description"
             app:layout_constraintEnd_toStartOf="@+id/task_due_date"
@@ -75,17 +75,18 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginTop="24dp"
-            android:layout_marginBottom="28dp"
+            android:layout_marginBottom="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/taskCheckbox"
-            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/task_delete"
             app:layout_constraintTop_toBottomOf="@+id/taskCheckbox"
+            app:layout_constraintVertical_bias="0.0"
             app:srcCompat="@drawable/ic_close_black_48dp" />
 
-        <EditText
+        <TextView
             android:id="@+id/task_due_date"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
             android:ems="10"
