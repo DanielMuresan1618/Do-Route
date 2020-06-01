@@ -8,6 +8,7 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.room.RoomDatabase
 import com.example.doroute.data.domain.stores.TaskDbStore
 import com.example.doroute.data.models.TaskModel
+import com.example.doroute.helpers.TaskStates
 import com.example.doroute.reminders.AlarmScheduler
 
 //Handles any global application broadcasts.
@@ -44,6 +45,7 @@ class AppGlobalReceiver : BroadcastReceiver() {
                     if (task != null) {
                         Log.d(TAG, "Task Checkbox: ${task.checkboxChecked}")
                         task.checkboxChecked = true
+                        task.status = TaskStates.COMPLETE
                         // Update the database
                         db.updateTask(task)
                         Log.d(TAG, "Task Checkbox: ${task.checkboxChecked}")

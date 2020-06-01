@@ -14,6 +14,7 @@ import com.google.maps.android.clustering.ClusterManager
 import com.google.maps.android.clustering.view.DefaultClusterRenderer
 import com.google.maps.android.ui.IconGenerator
 
+//Render Custom marker using Clusters
 class ClusterManagerRenderer(
     context: Context, googleMap: GoogleMap?,
     clusterManager: ClusterManager<ClusterMarker>?

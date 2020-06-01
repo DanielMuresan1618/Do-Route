@@ -77,7 +77,7 @@ class MapsFragment : Fragment(),
     //Map
     private var mMap: GoogleMap? = null
     private var mapView: MapView? = null
-    private var mGeoApiContext: GeoApiContext? = null
+    private var mGeoApiContext: GeoApiContext? = null //for DirectionsApi
     private var mFusedLocationProviderClient: FusedLocationProviderClient? = null
 
     //Marker
@@ -140,52 +140,18 @@ class MapsFragment : Fragment(),
             )
 
         //attach the viewmodel to the activity, not the fragment, to prevent memory leak
-        taskViewModel = requireActivity().let{ViewModelProvider(this,taskFactory).get(TaskViewModel::class.java) }
-        requireActivity().findViewById<FloatingActionButton>(R.id.fab)?.setOnClickListener{addTask()}
+        taskViewModel = requireActivity().let {
+            ViewModelProvider(
+                this,
+                taskFactory
+            ).get(TaskViewModel::class.java)
+        }
+
         initSearchBar()
     }
 
     private fun addTask() {
-        var taskModel = TaskModel(
-            randomUUID().toString(),
-            randomUUID().toString(),
-            "ceva",
-            "da",
-            Calendar.getInstance().time,
-            mLastKnownLocation!!.latitude + 1,
-            mLastKnownLocation!!.longitude + 1,
-            "undeva",
-            TaskStates.OVERDUE,
-            false
-            )
-        taskViewModel.addTask(taskModel)
-        taskModel = TaskModel(
-            randomUUID().toString(),
-            randomUUID().toString(),
-            "ceva",
-            "da",
-            Calendar.getInstance().time,
-            mLastKnownLocation!!.latitude + 1,
-            mLastKnownLocation!!.longitude + 1,
-            "undeva",
-            TaskStates.OVERDUE,
-            false
-        )
-        taskModel.status= TaskStates.OVERDUE
-        taskViewModel.addTask(taskModel)
-        taskModel =TaskModel(
-            randomUUID().toString(),
-            randomUUID().toString(),
-            "ceva",
-            "da",
-            Calendar.getInstance().time,
-            mLastKnownLocation!!.latitude + 1,
-            mLastKnownLocation!!.longitude + 1,
-            "undeva",
-            TaskStates.OVERDUE,
-            false
-        )
-        taskViewModel.addTask(taskModel)
+
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -202,6 +168,7 @@ class MapsFragment : Fragment(),
         mMap = googleMap
         mMap!!.isMyLocationEnabled = true
         mMap!!.uiSettings.isMyLocationButtonEnabled = true
+        mMap!!.setOnMapLongClickListener(this::onMapLongClick)
 
         val activity = requireActivity()
 
@@ -224,6 +191,22 @@ class MapsFragment : Fragment(),
             if (materialSearchBar.isSearchEnabled) materialSearchBar.disableSearch()
             false
         }
+    }
+
+    private fun onMapLongClick(latLng: LatLng) {
+        val taskModel = TaskModel(
+            randomUUID().toString(),
+            randomUUID().toString(),
+            "ceva",
+            "da",
+            Calendar.getInstance().time,
+            latLng.latitude,
+            latLng.longitude,
+            "altundeva",
+            TaskStates.OVERDUE,
+            false
+        )
+        taskViewModel.addTask(taskModel,requireContext())
     }
 
     private fun locationSettingRequest(activity: FragmentActivity) {
@@ -260,9 +243,9 @@ class MapsFragment : Fragment(),
 
     private fun resetMap() {
         mMap?.clear()
-        if(mClusterManager!=null) {
+        if (mClusterManager != null) {
             mClusterManager?.clearItems()
-            if (mClusterMarkers!=null && mClusterMarkers?.size!! > 0) {
+            if (mClusterMarkers != null && mClusterMarkers?.size!! > 0) {
                 mClusterMarkers?.clear()
                 mClusterMarkers = ArrayList<ClusterMarker>()
             }
@@ -330,10 +313,10 @@ class MapsFragment : Fragment(),
     private fun setCameraView() {
 
         // Set a boundary to start
-        val bottomBoundary: Double = mTasks!!.last().latitude - .1 //it's a bit off so other icons won't cover it
-        val leftBoundary: Double = mTasks!!.last().longitude - .1
-        val topBoundary: Double = mTasks!!.last().latitude + .1
-        val rightBoundary: Double = mTasks!!.last().longitude + .1
+        val bottomBoundary: Double = mTasks!!.last().latitude - .01
+        val leftBoundary: Double = mTasks!!.last().longitude - .01
+        val topBoundary: Double = mTasks!!.last().latitude + .01
+        val rightBoundary: Double = mTasks!!.last().longitude + .01
         val mMapBoundary = LatLngBounds(
             LatLng(bottomBoundary, leftBoundary),
             LatLng(topBoundary, rightBoundary)
@@ -360,12 +343,12 @@ class MapsFragment : Fragment(),
     //Markers
 
     private fun addMapMarkers() {
-        resetMap()
+        //resetMap()
         mMap!!.setOnInfoWindowClickListener(this)
         mTasks?.forEach { task ->
             Log.d(TAG, "addMapMarkers: location: " + task.locationName)
             val snippet = "Determine route to this task?"
-            val avatar: Int = R.drawable.ic_android_black_10dp // set the default avatar
+            val avatar: Int = R.drawable.map_marker // set the default avatar
             val newClusterMarker = ClusterMarker(
                 LatLng(task.latitude, task.longitude),
                 task.title,
@@ -377,8 +360,8 @@ class MapsFragment : Fragment(),
             mClusterMarkers?.add(newClusterMarker)
 
         }
-        mClusterManager?.cluster()
-        setCameraView()
+        mClusterManager?.cluster() //make the new cluster visible
+        setCameraView() //and focus on it
     }
 
 
@@ -387,37 +370,37 @@ class MapsFragment : Fragment(),
         if (mLastKnownLocation == null)
             getDeviceLocation() // it's not async. This method will not return until i have a location
 
-          directions.alternatives(true)
+        directions.alternatives(true)
         directions.destination( //task destination
-                com.google.maps.model.LatLng(
-                    marker.position.latitude,
-                    marker.position.longitude
-                )
+            com.google.maps.model.LatLng(
+                marker.position.latitude,
+                marker.position.longitude
             )
+        )
         directions.origin(//my location
-                com.google.maps.model.LatLng(
-                    mLastKnownLocation!!.latitude,
-                    mLastKnownLocation!!.longitude
-                )
+            com.google.maps.model.LatLng(
+                mLastKnownLocation!!.latitude,
+                mLastKnownLocation!!.longitude
             )
+        )
         directions.setCallback(object : PendingResult.Callback<DirectionsResult?> {
-                override fun onResult(result: DirectionsResult?) {
-                    if (result != null){
-                        Log.d(TAG, "calculateDirections: routes: " + result.routes[0].toString())
-                        Log.d(TAG, "calculateDirections: duration: " + result.routes[0].legs[0].duration)
-                        Log.d(TAG, "calculateDirections: distance: " + result.routes[0].legs[0].distance)
-                        Log.d(TAG, "calculateDirections: geocodedWayPoints: " + result.geocodedWaypoints[0].toString())
-                        addPolylinesToMap(result)
-                    }
+            override fun onResult(result: DirectionsResult?) {
+                if (result != null) {
+//                    Log.d(TAG, "calculateDirections: routes: " + result.routes[0].toString())
+//                    Log.d(TAG, "calculateDirections: duration: " + result.routes[0].legs[0].duration)
+//                    Log.d(TAG, "calculateDirections: distance: " + result.routes[0].legs[0].distance)
+//                    Log.d(TAG, "calculateDirections: geocodedWayPoints: " + result.geocodedWaypoints[0].toString())
+                    addPolylinesToMap(result)
                 }
+            }
 
-                override fun onFailure(e: Throwable) {
-                    Log.e(TAG, "calculateDirections: Failed to get directions: " + e.message)
-                }
-            })
+            override fun onFailure(e: Throwable) {
+                Log.e(TAG, "calculateDirections: Failed to get directions: " + e.message)
+            }
+        })
 
     }
-
+/*
     private fun resetSelectedMarker() {
         if (mSelectedMarker != null) {
             mSelectedMarker!!.isVisible = true
@@ -432,16 +415,18 @@ class MapsFragment : Fragment(),
         }
     }
 
+ */
+
     override fun onInfoWindowClick(marker: Marker) {
         AlertDialog.Builder(activity)
             .setMessage(marker.snippet)
             .setCancelable(true)
             .setPositiveButton("Yes") { dialog, id ->
-                    resetSelectedMarker()
-                    mSelectedMarker = marker
-                    calculateDirections(marker)
-                    dialog.dismiss()
-                }
+                //resetSelectedMarker()
+                mSelectedMarker = marker
+                calculateDirections(marker)
+                dialog.dismiss()
+            }
             .setNegativeButton("No") { dialog, id -> dialog.cancel() }
             .create()
             .show()
@@ -481,12 +466,9 @@ class MapsFragment : Fragment(),
 
     private fun addPolylinesToMap(result: DirectionsResult) {
         Handler(Looper.getMainLooper()).post {
-            Log.d(
-                TAG,
-                "run: result routes: " + result.routes.size
-            )
+            Log.d(TAG, "run: result routes: " + result.routes.size)
             if (mPolyLinesData.isNotEmpty()) {
-                mPolyLinesData.forEach{
+                mPolyLinesData.forEach {
                     it.polyline.remove() //safe delete
                 }
                 mPolyLinesData.clear()

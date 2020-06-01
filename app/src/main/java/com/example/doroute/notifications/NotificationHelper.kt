@@ -75,7 +75,6 @@ object NotificationHelper {
             }
             setLargeIcon(BitmapFactory.decodeResource(context.resources, drawable))
             setContentText("${task.title}, ${task.description}")
-            setGroup(status) //TODO: this may fail
 
             // Launches the app to open the reminder edit screen when tapping the whole notification
             val intent = Intent(context, MainActivity::class.java).apply {

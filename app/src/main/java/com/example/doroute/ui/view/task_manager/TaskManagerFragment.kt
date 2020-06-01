@@ -95,7 +95,7 @@ class TaskManagerFragment : Fragment() {
     }
 
     private fun update(task: TaskModel) {
-        viewModel.updateTask(task)
+        viewModel.updateTask(task, requireContext())
 
     }
 
@@ -108,7 +108,7 @@ class TaskManagerFragment : Fragment() {
 
             setPositiveButton(android.R.string.yes) { _, _ ->
 
-                viewModel.removeTask(task)
+                viewModel.removeTask(task, requireContext())
                 Toast.makeText(
                     this@TaskManagerFragment.requireContext(),
                     "The task '${task.title}' was deleted", Toast.LENGTH_SHORT

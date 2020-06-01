@@ -142,8 +142,6 @@ class TaskRecyclerAdapter(
                             tasks[adapterPosition].dueDate = selectedCalendar.time
                             setStatusForTask()
                             onUpdate(tasks[adapterPosition]) //onUpdate created a lot of problems...
-                            //and set up the alarm
-                            AlarmScheduler.updateAlarmsForReminder(context,tasks[adapterPosition])
                         },
                         now.get(Calendar.HOUR_OF_DAY),
                         now.get(Calendar.MINUTE),
