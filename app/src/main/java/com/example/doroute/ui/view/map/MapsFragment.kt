@@ -19,6 +19,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.RelativeLayout
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
@@ -53,7 +54,6 @@ import com.google.android.libraries.places.api.net.FetchPlaceRequest
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsResponse
 import com.google.android.libraries.places.api.net.PlacesClient
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.maps.DirectionsApiRequest
 import com.google.maps.GeoApiContext
 import com.google.maps.PendingResult
@@ -65,6 +65,7 @@ import com.mancj.materialsearchbar.MaterialSearchBar.OnSearchActionListener
 import com.mancj.materialsearchbar.adapter.SuggestionsAdapter
 import java.util.*
 import java.util.UUID.randomUUID
+import kotlin.collections.ArrayList
 
 
 class MapsFragment : Fragment(),
@@ -81,11 +82,11 @@ class MapsFragment : Fragment(),
     private var mFusedLocationProviderClient: FusedLocationProviderClient? = null
 
     //Marker
-    private var mTripMarkers = ArrayList<Marker>()
+    private var mTripMarkers : MutableList<Marker>? = null
     private var mClusterManager: ClusterManager<ClusterMarker>? = null
     private var mClusterMarkers: ArrayList<ClusterMarker>? = null
     private var mClusterManagerRenderer: ClusterManagerRenderer? = null
-    private var mSelectedMarker: Marker? = null
+   // private var mSelectedMarker: Marker? = null
 
     //Model
     private var mLastKnownLocation: Location? = null //device's last known location
@@ -115,6 +116,8 @@ class MapsFragment : Fragment(),
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        mFusedLocationProviderClient =
+            LocationServices.getFusedLocationProviderClient(requireActivity())
         mapView = rootView.findViewById(R.id.map)
         mapView!!.onCreate(savedInstanceState)
         mapView!!.onResume()
@@ -128,8 +131,6 @@ class MapsFragment : Fragment(),
                 .build()
         }
 
-        mFusedLocationProviderClient =
-            LocationServices.getFusedLocationProviderClient(this.requireContext())
         val taskFactory =
             TaskViewModelFactory(
                 TaskDbStore(
@@ -139,7 +140,6 @@ class MapsFragment : Fragment(),
                 )
             )
 
-        //attach the viewmodel to the activity, not the fragment, to prevent memory leak
         taskViewModel = requireActivity().let {
             ViewModelProvider(
                 this,
@@ -147,11 +147,25 @@ class MapsFragment : Fragment(),
             ).get(TaskViewModel::class.java)
         }
 
+        taskViewModel.retrieveTasks()
+        taskViewModel.markersLiveData.postValue(mTripMarkers)
+
         initSearchBar()
     }
 
-    private fun addTask() {
 
+
+    private fun computeMarkersFromTaskCoordinates(task: TaskModel, polylineData: PolylineData) {
+        //will compute only for the tasks with trip
+        val latLng = LatLng(task.latitude, task.longitude)
+        val marker: Marker = mMap!!.addMarker(
+            MarkerOptions()
+                .position(latLng)
+                .title("Trip #${mPolyLinesData.indexOf(polylineData)}")
+                .snippet(
+                    "Duration: " + polylineData.leg.duration
+                )
+        )
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -165,13 +179,14 @@ class MapsFragment : Fragment(),
 
     //Map
     override fun onMapReady(googleMap: GoogleMap) {
+        val activity = requireActivity()
+        if (mFusedLocationProviderClient==null)
+            mFusedLocationProviderClient =
+                LocationServices.getFusedLocationProviderClient(requireActivity())
         mMap = googleMap
         mMap!!.isMyLocationEnabled = true
         mMap!!.uiSettings.isMyLocationButtonEnabled = true
         mMap!!.setOnMapLongClickListener(this::onMapLongClick)
-
-        val activity = requireActivity()
-
         mClusterManager = ClusterManager<ClusterMarker>(activity, mMap)
         mMap!!.setOnPolylineClickListener(this)
         mClusterManager = ClusterManager<ClusterMarker>(activity, mMap)
@@ -181,11 +196,21 @@ class MapsFragment : Fragment(),
         findMyLocationButton()
         locationSettingRequest(activity)
 
+        //Observers
         taskViewModel.tasksLiveData.observe(viewLifecycleOwner, Observer {
             mTasks = it
             addMapMarkers()
+            mTasks?.forEach { task ->
+                loadPolylinesFromTasks(task)
+            }
         })
 
+        taskViewModel.markersLiveData.observe(viewLifecycleOwner, Observer { markers ->
+            mTripMarkers = markers
+        })
+
+
+        //Widgets
         mMap!!.setOnMyLocationButtonClickListener {
             if (materialSearchBar.isSuggestionsVisible) materialSearchBar.clearSuggestions()
             if (materialSearchBar.isSearchEnabled) materialSearchBar.disableSearch()
@@ -206,7 +231,7 @@ class MapsFragment : Fragment(),
             TaskStates.OVERDUE,
             false
         )
-        taskViewModel.addTask(taskModel,requireContext())
+        taskViewModel.addTask(taskModel, requireContext())
     }
 
     private fun locationSettingRequest(activity: FragmentActivity) {
@@ -220,8 +245,11 @@ class MapsFragment : Fragment(),
         val task: Task<LocationSettingsResponse> =
             settingsClient.checkLocationSettings(builder.build())
 
-        task.addOnSuccessListener(requireActivity()) { getDeviceLocation() }
+        task.addOnSuccessListener(activity) { getDeviceLocation()
+            Log.d(TAG, "location access granted")
+        }
             .addOnFailureListener(activity) { e ->
+                Log.d(TAG, "location access denied")
                 if (e is ResolvableApiException) {
                     val resolvable: ResolvableApiException = e
                     try {
@@ -233,21 +261,13 @@ class MapsFragment : Fragment(),
             }
     }
 
-    private fun getLocationRequest(): LocationRequest {
-        val locationRequest: LocationRequest = LocationRequest.create()
-        locationRequest.interval = 10000
-        locationRequest.fastestInterval = 5000
-        locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-        return locationRequest
-    }
-
     private fun resetMap() {
         mMap?.clear()
         if (mClusterManager != null) {
             mClusterManager?.clearItems()
             if (mClusterMarkers != null && mClusterMarkers?.size!! > 0) {
                 mClusterMarkers?.clear()
-                mClusterMarkers = ArrayList<ClusterMarker>()
+                mClusterMarkers = ArrayList()
             }
         }
         if (mPolyLinesData.size > 0) {
@@ -270,7 +290,7 @@ class MapsFragment : Fragment(),
                         )
                     )
                 } else {
-                    computeLatestLocation()
+                    defaultLocationCallback()
                 }
             } else {
                 Toast.makeText(activity, "unable to get last location", Toast.LENGTH_SHORT).show()
@@ -278,10 +298,7 @@ class MapsFragment : Fragment(),
         }
     }
 
-    private fun computeLatestLocation() {
-        //compute a new lastLocation
-        //start by building the required parameter objects
-        val locationRequest = getLocationRequest()
+    private fun defaultLocationCallback() {
         val locationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult?) {
                 super.onLocationResult(locationResult)
@@ -299,10 +316,15 @@ class MapsFragment : Fragment(),
                         )
                     )
                     mFusedLocationProviderClient!!.removeLocationUpdates(this) //Once I get the location, there's no need for other location updates
+
                 }
             }
         }
+        computeLatestLocation(locationCallback)
+    }
 
+    private fun computeLatestLocation(locationCallback: LocationCallback) {
+        val locationRequest = getLocationRequest()
         mFusedLocationProviderClient!!.requestLocationUpdates(
             locationRequest,
             locationCallback,
@@ -310,8 +332,34 @@ class MapsFragment : Fragment(),
         )
     }
 
+    private fun loadPolylinesFromTasks(task:TaskModel) {
+        val locationCallback = object : LocationCallback() {
+            override fun onLocationResult(locationResult: LocationResult?) {
+                if (mLastKnownLocation != null) {
+                    val origin = com.google.maps.model.LatLng(
+                        mLastKnownLocation!!.latitude, mLastKnownLocation!!.longitude
+                    )
+                    val destination: com.google.maps.model.LatLng =
+                        com.google.maps.model.LatLng(task.latitude, task.longitude)
+                    calculateDirections(origin, destination)
+                    Log.d(TAG, "marker with lat: ${destination.lat}")
+                }
+            }
+        }
+        computeLatestLocation(locationCallback)
+    }
+
+    private fun getLocationRequest(): LocationRequest {
+        val locationRequest: LocationRequest = LocationRequest.create()
+        locationRequest.interval = 10000
+        locationRequest.fastestInterval = 5000
+        locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+        return locationRequest
+    }
+
     private fun setCameraView() {
 
+        if (mTasks.isNullOrEmpty()) return
         // Set a boundary to start
         val bottomBoundary: Double = mTasks!!.last().latitude - .01
         val leftBoundary: Double = mTasks!!.last().longitude - .01
@@ -321,7 +369,7 @@ class MapsFragment : Fragment(),
             LatLng(bottomBoundary, leftBoundary),
             LatLng(topBoundary, rightBoundary)
         )
-        mMap?.moveCamera(CameraUpdateFactory.newLatLngBounds(mMapBoundary, 0))
+        mMap!!.moveCamera(CameraUpdateFactory.newLatLngBounds(mMapBoundary, 0))
     }
 
     private fun zoomRoute(lastLatLngRoute: List<LatLng>?) {
@@ -339,9 +387,7 @@ class MapsFragment : Fragment(),
         )
     }
 
-
     //Markers
-
     private fun addMapMarkers() {
         //resetMap()
         mMap!!.setOnInfoWindowClickListener(this)
@@ -358,38 +404,39 @@ class MapsFragment : Fragment(),
             )
             mClusterManager?.addItem(newClusterMarker)
             mClusterMarkers?.add(newClusterMarker)
-
         }
         mClusterManager?.cluster() //make the new cluster visible
         setCameraView() //and focus on it
     }
 
-
-    private fun calculateDirections(marker: Marker) {
+    private fun calculateDirections(
+        origin: com.google.maps.model.LatLng,
+        destination: com.google.maps.model.LatLng
+    ) {
         val directions = DirectionsApiRequest(mGeoApiContext)
-        if (mLastKnownLocation == null)
-            getDeviceLocation() // it's not async. This method will not return until i have a location
-
+        if (mLastKnownLocation == null) {
+            Log.d(TAG,"calculateDirections has mLastKnownLocation= null")
+            return
+        }
         directions.alternatives(true)
-        directions.destination( //task destination
-            com.google.maps.model.LatLng(
-                marker.position.latitude,
-                marker.position.longitude
-            )
-        )
-        directions.origin(//my location
-            com.google.maps.model.LatLng(
-                mLastKnownLocation!!.latitude,
-                mLastKnownLocation!!.longitude
-            )
-        )
+        directions.destination(destination)
+        directions.origin(origin)
         directions.setCallback(object : PendingResult.Callback<DirectionsResult?> {
             override fun onResult(result: DirectionsResult?) {
                 if (result != null) {
-//                    Log.d(TAG, "calculateDirections: routes: " + result.routes[0].toString())
-//                    Log.d(TAG, "calculateDirections: duration: " + result.routes[0].legs[0].duration)
-//                    Log.d(TAG, "calculateDirections: distance: " + result.routes[0].legs[0].distance)
-//                    Log.d(TAG, "calculateDirections: geocodedWayPoints: " + result.geocodedWaypoints[0].toString())
+                    Log.d(TAG, "calculateDirections: routes: " + result.routes[0].toString())
+                    Log.d(
+                        TAG,
+                        "calculateDirections: duration: " + result.routes[0].legs[0].duration
+                    )
+                    Log.d(
+                        TAG,
+                        "calculateDirections: distance: " + result.routes[0].legs[0].distance
+                    )
+                    Log.d(
+                        TAG,
+                        "calculateDirections: geocodedWayPoints: " + result.geocodedWaypoints[0].toString()
+                    )
                     addPolylinesToMap(result)
                 }
             }
@@ -423,8 +470,18 @@ class MapsFragment : Fragment(),
             .setCancelable(true)
             .setPositiveButton("Yes") { dialog, id ->
                 //resetSelectedMarker()
-                mSelectedMarker = marker
-                calculateDirections(marker)
+
+                val destination = com.google.maps.model.LatLng(
+                    marker.position.latitude, marker.position.longitude
+                )
+                val origin = com.google.maps.model.LatLng(
+                    mLastKnownLocation!!.latitude, mLastKnownLocation!!.longitude
+                )
+               // mSelectedMarker = marker
+
+                taskViewModel.addMarker(marker)
+
+                calculateDirections(origin, destination)
                 dialog.dismiss()
             }
             .setNegativeButton("No") { dialog, id -> dialog.cancel() }
@@ -438,8 +495,9 @@ class MapsFragment : Fragment(),
     override fun onPolylineClick(polyline: Polyline) {
         mPolyLinesData.forEach { polylineData ->
             if (polyline.id == polylineData.polyline.id) {
+
                 polylineData.polyline.color =
-                    ContextCompat.getColor(requireContext(), R.color.quantum_bluegrey400)
+                    ResourcesCompat.getColor(resources, R.color.colorTaskOverdue, null)
                 polylineData.polyline.zIndex = 1.0F
                 val endLocation =
                     LatLng(
@@ -454,25 +512,21 @@ class MapsFragment : Fragment(),
                             "Duration: " + polylineData.leg.duration
                         )
                 )
-                mTripMarkers.add(marker)
+
                 marker.showInfoWindow()
             } else {
                 polylineData.polyline.color =
-                    ContextCompat.getColor(requireContext(), R.color.quantum_bluegrey500)
+                    ResourcesCompat.getColor(resources, R.color.colorTaskPending, null)
                 polylineData.polyline.zIndex = 0F
             }
         }
     }
 
+
     private fun addPolylinesToMap(result: DirectionsResult) {
         Handler(Looper.getMainLooper()).post {
             Log.d(TAG, "run: result routes: " + result.routes.size)
-            if (mPolyLinesData.isNotEmpty()) {
-                mPolyLinesData.forEach {
-                    it.polyline.remove() //safe delete
-                }
-                mPolyLinesData.clear()
-            }
+            //removePolylines()
             var duration = 999999999.0
             result.routes.forEach { route ->
                 val decodedPath =
@@ -490,11 +544,12 @@ class MapsFragment : Fragment(),
                         )
                     )
                 }
+
                 val polyline: Polyline =
                     mMap!!.addPolyline(PolylineOptions().addAll(newDecodedPath))
 
                 //default color
-                polyline.color = ContextCompat.getColor(requireActivity(), R.color.quantum_grey)
+                ResourcesCompat.getColor(resources, R.color.colorTaskPending, null)
                 polyline.isClickable = true
                 mPolyLinesData.add(PolylineData(polyline, route.legs[0]))
 
@@ -506,10 +561,20 @@ class MapsFragment : Fragment(),
                     onPolylineClick(polyline) //simulates the user click
                     zoomRoute(polyline.points)
                 }
-                mSelectedMarker!!.isVisible = false
+               // mSelectedMarker!!.isVisible = false
             }
         }
     }
+
+    private fun removePolylines() {
+        if (mPolyLinesData.isNotEmpty()) {
+            mPolyLinesData.forEach {
+                it.polyline.remove() //safe delete
+            }
+            mPolyLinesData.clear()
+        }
+    }
+
 
     //Widgets
     private fun initSearchBar() {
