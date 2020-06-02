@@ -12,8 +12,8 @@ tools:context=".ui.view.map.MapsFragment">
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginEnd="325dp"
-        android:layout_marginBottom="80dp"
+        android:layout_marginEnd="288dp"
+        android:layout_marginBottom="153dp"
         android:clickable="true"
         android:src="@android:drawable/stat_notify_sync_noanim" />
 

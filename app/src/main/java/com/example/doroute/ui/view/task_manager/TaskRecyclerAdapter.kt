@@ -114,8 +114,10 @@ class TaskRecyclerAdapter(
                     tasks[adapterPosition].status = TaskStates.OVERDUE
                 else
                     tasks[adapterPosition].status = TaskStates.PENDING
-            } else
+            } else {
                 tasks[adapterPosition].status = TaskStates.COMPLETE
+                tasks[adapterPosition].tripActive = false
+            }
         }
 
         private fun scheduleTask(itemView: View) {

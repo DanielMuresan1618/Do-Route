@@ -45,6 +45,7 @@ class AppGlobalReceiver : BroadcastReceiver() {
                         Log.d(TAG, "Task Checkbox: ${task.checkboxChecked}")
                         task.checkboxChecked = true
                         task.status = TaskStates.COMPLETE
+                        task.tripActive = false
                         // Update the database
                         db.updateTask(task)
                         Log.d(TAG, "Task Checkbox: ${task.checkboxChecked}")
