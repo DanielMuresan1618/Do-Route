@@ -18,6 +18,10 @@ interface DAO {
     fun getTask(id:String): FullTaskEntity
 
     @Transaction
+    @Query("SELECT * FROM tasks INNER JOIN locations WHERE latitude LIKE :latitude AND longitude LIKE :longitude")
+    fun getTaskByLocation(latitude:Double, longitude: Double): FullTaskEntity
+
+    @Transaction
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertTask(task: TaskEntity, locationEntity: LocationEntity)
 

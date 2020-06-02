@@ -28,7 +28,7 @@ class AlarmReceiver : BroadcastReceiver() {
                     val repository = TaskDbStore(RoomDatabase.getDb(context.applicationContext))
                     try {
                         val task: TaskModel? =
-                            repository.getTask(intent.extras!!.getString(TaskModel.TASKID)!!) //highly dangerous operation; there won't be stale data if broadcasts are called from livedata contexts
+                            repository.getTaskById(intent.extras!!.getString(TaskModel.TASKID)!!) //highly dangerous operation; there won't be stale data if broadcasts are called from livedata contexts
                         if (task != null) {
                             Log.d(TAG, "Am primit un task ${task.status}")
                             val id = SystemClock.uptimeMillis().toInt()

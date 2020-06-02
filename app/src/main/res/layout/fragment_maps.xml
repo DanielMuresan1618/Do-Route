@@ -6,6 +6,17 @@ android:layout_width="match_parent"
 android:layout_height="match_parent"
 tools:context=".ui.view.map.MapsFragment">
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fbt_refresh"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="325dp"
+        android:layout_marginBottom="80dp"
+        android:clickable="true"
+        android:src="@android:drawable/stat_notify_sync_noanim" />
+
     <com.google.android.gms.maps.MapView
         android:id="@+id/map"
         android:layout_width="match_parent"
@@ -23,17 +34,8 @@ tools:context=".ui.view.map.MapsFragment">
         app:mt_maxSuggestionsCount="10"
         app:mt_navIconEnabled="true"
         app:mt_placeholder="Search a place"
-        app:mt_speechMode="false" />
+        app:mt_speechMode="false" >
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/location_pin"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="185dp"
-        android:layout_marginEnd="186dp"
-        android:layout_marginBottom="348dp"
-        android:src="@drawable/ic_pin" />
+    </com.mancj.materialsearchbar.MaterialSearchBar>
+
 </RelativeLayout>

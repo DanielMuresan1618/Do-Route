@@ -22,6 +22,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.doroute.R
@@ -54,6 +55,7 @@ import com.google.android.libraries.places.api.net.FetchPlaceRequest
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsResponse
 import com.google.android.libraries.places.api.net.PlacesClient
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.maps.DirectionsApiRequest
 import com.google.maps.GeoApiContext
 import com.google.maps.PendingResult
@@ -63,6 +65,7 @@ import com.google.maps.model.DirectionsResult
 import com.mancj.materialsearchbar.MaterialSearchBar
 import com.mancj.materialsearchbar.MaterialSearchBar.OnSearchActionListener
 import com.mancj.materialsearchbar.adapter.SuggestionsAdapter
+import kotlinx.android.synthetic.main.fragment_maps.view.*
 import java.util.*
 import java.util.UUID.randomUUID
 import kotlin.collections.ArrayList
@@ -82,11 +85,11 @@ class MapsFragment : Fragment(),
     private var mFusedLocationProviderClient: FusedLocationProviderClient? = null
 
     //Marker
-    private var mTripMarkers : MutableList<Marker>? = null
+    private var mTripMarkers: MutableList<Marker>? = null
     private var mClusterManager: ClusterManager<ClusterMarker>? = null
     private var mClusterMarkers: ArrayList<ClusterMarker>? = null
     private var mClusterManagerRenderer: ClusterManagerRenderer? = null
-   // private var mSelectedMarker: Marker? = null
+    // private var mSelectedMarker: Marker? = null
 
     //Model
     private var mLastKnownLocation: Location? = null //device's last known location
@@ -102,6 +105,7 @@ class MapsFragment : Fragment(),
 
     //widgets
     private lateinit var materialSearchBar: MaterialSearchBar
+    private lateinit var fbt_refresh: FloatingActionButton
 
     //Lifecycle
     override fun onCreateView(
@@ -122,8 +126,8 @@ class MapsFragment : Fragment(),
         mapView!!.onCreate(savedInstanceState)
         mapView!!.onResume()
         mapView!!.getMapAsync(this) //therefore, onMapReady runs after onViewCreated
-        Places.initialize(requireContext(), getString(R.string.mapsKey))
-        placesClient = Places.createClient(this.requireContext())
+        Places.initialize(requireActivity(), getString(R.string.mapsKey))
+        placesClient = Places.createClient(this.requireActivity())
 
         if (mGeoApiContext == null) {
             mGeoApiContext = GeoApiContext.Builder()
@@ -140,33 +144,47 @@ class MapsFragment : Fragment(),
                 )
             )
 
-        taskViewModel = requireActivity().let {
+        taskViewModel = requireActivity().run {
             ViewModelProvider(
                 this,
                 taskFactory
             ).get(TaskViewModel::class.java)
         }
 
-        taskViewModel.retrieveTasks()
-        taskViewModel.markersLiveData.postValue(mTripMarkers)
-
+        fbt_refresh = rootView.findViewById(R.id.fbt_refresh)
+        fbt_refresh.setOnClickListener{
+            resetMap()
+            mTasks?.forEach {
+                if (it.status != TaskStates.COMPLETE) {
+                    Log.d(TAG,"iterating through tasks(${mTasks?.size}")
+                    addMapMarkers(it)
+                    if (it.tripActive)
+                        loadPolylinesFromTasks(it)
+                }
+            }
+        }
         initSearchBar()
     }
 
+    override fun onPause() {
+        super.onPause()
+        removePolylines()
+        resetMap()
 
-
-    private fun computeMarkersFromTaskCoordinates(task: TaskModel, polylineData: PolylineData) {
-        //will compute only for the tasks with trip
-        val latLng = LatLng(task.latitude, task.longitude)
-        val marker: Marker = mMap!!.addMarker(
-            MarkerOptions()
-                .position(latLng)
-                .title("Trip #${mPolyLinesData.indexOf(polylineData)}")
-                .snippet(
-                    "Duration: " + polylineData.leg.duration
-                )
-        )
     }
+
+    override fun onStop() {
+        super.onStop()
+        removePolylines()
+        resetMap()
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        removePolylines()
+        resetMap()
+    }
+
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -180,13 +198,12 @@ class MapsFragment : Fragment(),
     //Map
     override fun onMapReady(googleMap: GoogleMap) {
         val activity = requireActivity()
-        if (mFusedLocationProviderClient==null)
-            mFusedLocationProviderClient =
-                LocationServices.getFusedLocationProviderClient(requireActivity())
+
         mMap = googleMap
         mMap!!.isMyLocationEnabled = true
         mMap!!.uiSettings.isMyLocationButtonEnabled = true
         mMap!!.setOnMapLongClickListener(this::onMapLongClick)
+
         mClusterManager = ClusterManager<ClusterMarker>(activity, mMap)
         mMap!!.setOnPolylineClickListener(this)
         mClusterManager = ClusterManager<ClusterMarker>(activity, mMap)
@@ -199,16 +216,7 @@ class MapsFragment : Fragment(),
         //Observers
         taskViewModel.tasksLiveData.observe(viewLifecycleOwner, Observer {
             mTasks = it
-            addMapMarkers()
-            mTasks?.forEach { task ->
-                loadPolylinesFromTasks(task)
-            }
         })
-
-        taskViewModel.markersLiveData.observe(viewLifecycleOwner, Observer { markers ->
-            mTripMarkers = markers
-        })
-
 
         //Widgets
         mMap!!.setOnMyLocationButtonClickListener {
@@ -229,11 +237,12 @@ class MapsFragment : Fragment(),
             latLng.longitude,
             "altundeva",
             TaskStates.OVERDUE,
+            false,
             false
         )
-        taskViewModel.addTask(taskModel, requireContext())
+        taskViewModel.addTask(taskModel)
+        addMapMarkers(taskModel)
     }
-
     private fun locationSettingRequest(activity: FragmentActivity) {
         //check if gps is enabled or not and then request user to enable it
         val locationRequest: LocationRequest = getLocationRequest()
@@ -245,7 +254,8 @@ class MapsFragment : Fragment(),
         val task: Task<LocationSettingsResponse> =
             settingsClient.checkLocationSettings(builder.build())
 
-        task.addOnSuccessListener(activity) { getDeviceLocation()
+        task.addOnSuccessListener(activity) {
+            getDeviceLocation()
             Log.d(TAG, "location access granted")
         }
             .addOnFailureListener(activity) { e ->
@@ -332,10 +342,10 @@ class MapsFragment : Fragment(),
         )
     }
 
-    private fun loadPolylinesFromTasks(task:TaskModel) {
-        val locationCallback = object : LocationCallback() {
-            override fun onLocationResult(locationResult: LocationResult?) {
+    private fun loadPolylinesFromTasks(task: TaskModel) {
+
                 if (mLastKnownLocation != null) {
+                    resetMap()
                     val origin = com.google.maps.model.LatLng(
                         mLastKnownLocation!!.latitude, mLastKnownLocation!!.longitude
                     )
@@ -344,9 +354,8 @@ class MapsFragment : Fragment(),
                     calculateDirections(origin, destination)
                     Log.d(TAG, "marker with lat: ${destination.lat}")
                 }
-            }
-        }
-        computeLatestLocation(locationCallback)
+
+
     }
 
     private fun getLocationRequest(): LocationRequest {
@@ -388,10 +397,9 @@ class MapsFragment : Fragment(),
     }
 
     //Markers
-    private fun addMapMarkers() {
+    private fun addMapMarkers(task: TaskModel) {
         //resetMap()
         mMap!!.setOnInfoWindowClickListener(this)
-        mTasks?.forEach { task ->
             Log.d(TAG, "addMapMarkers: location: " + task.locationName)
             val snippet = "Determine route to this task?"
             val avatar: Int = R.drawable.map_marker // set the default avatar
@@ -404,9 +412,7 @@ class MapsFragment : Fragment(),
             )
             mClusterManager?.addItem(newClusterMarker)
             mClusterMarkers?.add(newClusterMarker)
-        }
         mClusterManager?.cluster() //make the new cluster visible
-        setCameraView() //and focus on it
     }
 
     private fun calculateDirections(
@@ -414,29 +420,16 @@ class MapsFragment : Fragment(),
         destination: com.google.maps.model.LatLng
     ) {
         val directions = DirectionsApiRequest(mGeoApiContext)
-        if (mLastKnownLocation == null) {
-            Log.d(TAG,"calculateDirections has mLastKnownLocation= null")
-            return
-        }
         directions.alternatives(true)
         directions.destination(destination)
         directions.origin(origin)
         directions.setCallback(object : PendingResult.Callback<DirectionsResult?> {
             override fun onResult(result: DirectionsResult?) {
                 if (result != null) {
-                    Log.d(TAG, "calculateDirections: routes: " + result.routes[0].toString())
-                    Log.d(
-                        TAG,
-                        "calculateDirections: duration: " + result.routes[0].legs[0].duration
-                    )
-                    Log.d(
-                        TAG,
-                        "calculateDirections: distance: " + result.routes[0].legs[0].distance
-                    )
-                    Log.d(
-                        TAG,
-                        "calculateDirections: geocodedWayPoints: " + result.geocodedWaypoints[0].toString()
-                    )
+//                    Log.d(TAG, "calculateDirections: routes: " + result.routes[0].toString())
+//                    Log.d(TAG, "calculateDirections: duration: " + result.routes[0].legs[0].duration)
+//                    Log.d(TAG, "calculateDirections: distance: " + result.routes[0].legs[0].distance)
+//                    Log.d(TAG, "calculateDirections: geocodedWayPoints: " + result.geocodedWaypoints[0].toString())
                     addPolylinesToMap(result)
                 }
             }
@@ -447,14 +440,10 @@ class MapsFragment : Fragment(),
         })
 
     }
+
+
+
 /*
-    private fun resetSelectedMarker() {
-        if (mSelectedMarker != null) {
-            mSelectedMarker!!.isVisible = true
-            mSelectedMarker = null
-            removeTripMarkers()
-        }
-    }
 
     private fun removeTripMarkers() {
         mTripMarkers.forEach { marker ->
@@ -464,7 +453,9 @@ class MapsFragment : Fragment(),
 
  */
 
+
     override fun onInfoWindowClick(marker: Marker) {
+        //marks a task's tripActive with true and creates polylines for the task whose location is equal to marker's
         AlertDialog.Builder(activity)
             .setMessage(marker.snippet)
             .setCancelable(true)
@@ -477,11 +468,15 @@ class MapsFragment : Fragment(),
                 val origin = com.google.maps.model.LatLng(
                     mLastKnownLocation!!.latitude, mLastKnownLocation!!.longitude
                 )
-               // mSelectedMarker = marker
-
-                taskViewModel.addMarker(marker)
-
-                calculateDirections(origin, destination)
+                // mSelectedMarker = marker
+                val task = taskViewModel.getTaskByLocation(marker.position)
+                if (!task.tripActive) {
+                    task.tripActive= true
+                    taskViewModel.updateTask(task)
+                    loadPolylinesFromTasks(task)
+                }
+                else
+                    Toast.makeText(requireContext(), "The trip is already active", Toast.LENGTH_SHORT).show()
                 dialog.dismiss()
             }
             .setNegativeButton("No") { dialog, id -> dialog.cancel() }
@@ -495,9 +490,7 @@ class MapsFragment : Fragment(),
     override fun onPolylineClick(polyline: Polyline) {
         mPolyLinesData.forEach { polylineData ->
             if (polyline.id == polylineData.polyline.id) {
-
-                polylineData.polyline.color =
-                    ResourcesCompat.getColor(resources, R.color.colorTaskOverdue, null)
+                polylineData.polyline.color = ContextCompat.getColor(requireContext(),R.color.colorTaskPending)
                 polylineData.polyline.zIndex = 1.0F
                 val endLocation =
                     LatLng(
@@ -515,8 +508,7 @@ class MapsFragment : Fragment(),
 
                 marker.showInfoWindow()
             } else {
-                polylineData.polyline.color =
-                    ResourcesCompat.getColor(resources, R.color.colorTaskPending, null)
+                polylineData.polyline.color = ContextCompat.getColor(requireContext(),R.color.colorPrimary)
                 polylineData.polyline.zIndex = 0F
             }
         }
@@ -526,7 +518,7 @@ class MapsFragment : Fragment(),
     private fun addPolylinesToMap(result: DirectionsResult) {
         Handler(Looper.getMainLooper()).post {
             Log.d(TAG, "run: result routes: " + result.routes.size)
-            //removePolylines()
+            removePolylines()
             var duration = 999999999.0
             result.routes.forEach { route ->
                 val decodedPath =
@@ -549,7 +541,8 @@ class MapsFragment : Fragment(),
                     mMap!!.addPolyline(PolylineOptions().addAll(newDecodedPath))
 
                 //default color
-                ResourcesCompat.getColor(resources, R.color.colorTaskPending, null)
+
+                polyline.color = ContextCompat.getColor(requireContext(),R.color.colorTaskOverdue)
                 polyline.isClickable = true
                 mPolyLinesData.add(PolylineData(polyline, route.legs[0]))
 
@@ -561,7 +554,6 @@ class MapsFragment : Fragment(),
                     onPolylineClick(polyline) //simulates the user click
                     zoomRoute(polyline.points)
                 }
-               // mSelectedMarker!!.isVisible = false
             }
         }
     }
@@ -645,7 +637,7 @@ class MapsFragment : Fragment(),
                 Handler().postDelayed(Runnable { materialSearchBar.clearSuggestions() }, 1000)
 
                 val imm: InputMethodManager? =
-                    requireContext().getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager?
+                    requireActivity().getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager?
 
                 imm?.hideSoftInputFromWindow(
                     materialSearchBar.windowToken,

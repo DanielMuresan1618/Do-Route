@@ -8,7 +8,7 @@ import com.example.doroute.data.database.entities.TaskEntity
 import com.example.doroute.helpers.Converters
 
 
-@Database(entities = [TaskEntity::class, LocationEntity::class], version = 7, exportSchema = false)
+@Database(entities = [TaskEntity::class, LocationEntity::class], version = 8, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun taskDao(): DAO

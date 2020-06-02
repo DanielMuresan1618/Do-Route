@@ -6,6 +6,7 @@ import com.example.doroute.data.database.entities.LocationEntity
 import com.example.doroute.data.database.entities.TaskEntity
 import com.example.doroute.data.models.TaskModel
 import com.example.doroute.data.domain.Repository
+import com.google.android.gms.maps.model.LatLng
 
 class TaskDbStore(private val appDatabase: AppDatabase) : Repository {
 
@@ -14,8 +15,12 @@ class TaskDbStore(private val appDatabase: AppDatabase) : Repository {
         return appDatabase.taskDao().getAllTasks().map { it.toDomainModel() }
     }
 
-    override fun getTask(id: String): TaskModel {
+    override fun getTaskById(id: String): TaskModel {
         return appDatabase.taskDao().getTask(id).toDomainModel()
+    }
+
+    override fun getTaskByLocation(latLng: LatLng): TaskModel {
+        return appDatabase.taskDao().getTaskByLocation(latLng.latitude, latLng.longitude).toDomainModel()
     }
 
     override fun addTask(t: TaskModel) {
@@ -31,7 +36,7 @@ class TaskDbStore(private val appDatabase: AppDatabase) : Repository {
     }
 
     private fun TaskModel.getTask() =
-        TaskEntity(taskId, title, description, dueDate, status, checkboxChecked)
+        TaskEntity(taskId, title, description, dueDate, status, checkboxChecked,tripActive)
 
     private fun TaskModel.getLocation() =
         LocationEntity(locationId, taskId, latitude, longitude, locationName)
@@ -49,7 +54,8 @@ class TaskDbStore(private val appDatabase: AppDatabase) : Repository {
             location.longitude,
             location.name,
             task.status,
-            task.checked
+            task.checked,
+            task.trip
         )
 
     companion object {

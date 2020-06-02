@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import androidx.core.app.NotificationManagerCompat
-import androidx.room.RoomDatabase
 import com.example.doroute.data.domain.stores.TaskDbStore
 import com.example.doroute.data.models.TaskModel
 import com.example.doroute.helpers.TaskStates
@@ -41,7 +40,7 @@ class AppGlobalReceiver : BroadcastReceiver() {
                             context.applicationContext
                         )
                     )
-                    val task: TaskModel? = db.getTask(taskId!!)
+                    val task: TaskModel? = db.getTaskById(taskId!!)
                     if (task != null) {
                         Log.d(TAG, "Task Checkbox: ${task.checkboxChecked}")
                         task.checkboxChecked = true

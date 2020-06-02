@@ -54,7 +54,7 @@ class TaskManagerFragment : Fragment() {
                     )
                 )
             )
-        viewModel = requireActivity().let {
+        viewModel = requireActivity().run {
             ViewModelProvider(
                 this,
                 factory
@@ -91,11 +91,10 @@ class TaskManagerFragment : Fragment() {
             recycler_view.adapter = taskAdapter
         })
         recycler_view.isNestedScrollingEnabled = false
-        viewModel.retrieveTasks()
     }
 
     private fun update(task: TaskModel) {
-        viewModel.updateTask(task, requireContext())
+        viewModel.updateTask(task)
 
     }
 
@@ -108,7 +107,7 @@ class TaskManagerFragment : Fragment() {
 
             setPositiveButton(android.R.string.yes) { _, _ ->
 
-                viewModel.removeTask(task, requireContext())
+                viewModel.removeTask(task)
                 Toast.makeText(
                     this@TaskManagerFragment.requireContext(),
                     "The task '${task.title}' was deleted", Toast.LENGTH_SHORT

@@ -24,7 +24,10 @@ data class TaskEntity(
     val status: Int,
 
     @ColumnInfo(name = "checked")
-    val checked: Boolean
+    val checked: Boolean,
+
+    @ColumnInfo(name = "trip")
+    val trip: Boolean
 )
 
 
