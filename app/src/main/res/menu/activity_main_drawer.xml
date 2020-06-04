@@ -12,9 +12,5 @@
             android:id="@+id/nav_tasks"
             android:icon="@drawable/ic_tasks"
             android:title="@string/menu_tasks" />
-        <item
-            android:id="@+id/nav_scheduler"
-            android:icon="@drawable/ic_schedule"
-            android:title="@string/menu_schedules" />
     </group>
 </menu>

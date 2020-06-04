@@ -169,7 +169,7 @@ class TaskRecyclerAdapter(
         fun bind(task: TaskModel){
             itemView.task_title.setText(task.title)
             itemView.task_description.setText(task.description)
-            itemView.task_due_date.text = task.dueDate.toString()
+            itemView.task_due_date.text = task.dueDate.toString().substringBefore("GMT")
             itemView.task_location.text = task.locationName
             itemView.taskCheckbox.isChecked = task.checkboxChecked
 

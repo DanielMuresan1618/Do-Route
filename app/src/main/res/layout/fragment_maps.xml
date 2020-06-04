@@ -6,17 +6,6 @@ android:layout_width="match_parent"
 android:layout_height="match_parent"
 tools:context=".ui.view.map.MapsFragment">
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fbt_refresh"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginEnd="288dp"
-        android:layout_marginBottom="153dp"
-        android:clickable="true"
-        android:src="@android:drawable/stat_notify_sync_noanim" />
-
     <com.google.android.gms.maps.MapView
         android:id="@+id/map"
         android:layout_width="match_parent"
