@@ -229,21 +229,10 @@ class MapsFragment : Fragment(),
     }
 
     private fun onMapLongClick(latLng: LatLng) {
-        val taskModel = TaskModel(
-            randomUUID().toString(),
-            randomUUID().toString(),
-            "ceva",
-            "da",
-            Calendar.getInstance().time,
-            latLng.latitude,
-            latLng.longitude,
-            "altundeva",
-            TaskStates.OVERDUE,
-            false,
-            false
-        )
-        taskViewModel.addTask(taskModel)
-        addMapMarkerForTask(taskModel)
+
+//        var taskModel:TaskModel
+//        taskViewModel.addTask(taskModel)
+//        addMapMarkerForTask(taskModel)
     }
 
     private fun resetMap() {
@@ -309,7 +298,7 @@ class MapsFragment : Fragment(),
                 mLastKnownLocation!!.latitude, mLastKnownLocation!!.longitude
             )
             val destination: com.google.maps.model.LatLng =
-                com.google.maps.model.LatLng(task.latitude, task.longitude)
+                com.google.maps.model.LatLng(task.location.latitude, task.location.longitude)
             calculateDirections(origin, destination)
         }
     }
@@ -321,7 +310,7 @@ class MapsFragment : Fragment(),
         val avatar: Int = R.drawable.map_marker
         val time = task.dueDate.toString().substringBefore("GMT")
         val markerOptions = MarkerOptions()
-            .position(LatLng(task.latitude, task.longitude))
+            .position(LatLng(task.location.latitude, task.location.longitude))
             .icon(BitmapDescriptorFactory.fromResource(avatar))
             .title(task.title)
             .snippet(time)

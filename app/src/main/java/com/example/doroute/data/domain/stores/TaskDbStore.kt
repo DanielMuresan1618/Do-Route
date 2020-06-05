@@ -1,8 +1,6 @@
 package com.example.doroute.data.domain.stores
 
 import com.example.doroute.data.database.AppDatabase
-import com.example.doroute.data.database.entities.FullTaskEntity
-import com.example.doroute.data.database.entities.LocationEntity
 import com.example.doroute.data.database.entities.TaskEntity
 import com.example.doroute.data.models.TaskModel
 import com.example.doroute.data.domain.Repository
@@ -24,41 +22,39 @@ class TaskDbStore(private val appDatabase: AppDatabase) : Repository {
     }
 
     override fun addTask(t: TaskModel) {
-        appDatabase.taskDao().insertTask(t.getTask(), t.getLocation())
+        appDatabase.taskDao().insertTask(t.toDbModel())
     }
 
     override fun removeTask(t: TaskModel) {
-        appDatabase.taskDao().deleteTask(t.getTask(), t.getLocation())
+        appDatabase.taskDao().deleteTask(t.toDbModel())
     }
 
     override fun updateTask(t: TaskModel) {
-        appDatabase.taskDao().updateTask(t.getTask(), t.getLocation())
+        appDatabase.taskDao().updateTask(t.toDbModel())
     }
 
-    private fun TaskModel.getTask() =
-        TaskEntity(taskId, title, description, dueDate, status, checkboxChecked,tripActive)
-
-    private fun TaskModel.getLocation() =
-        LocationEntity(locationId, taskId, latitude, longitude, locationName)
-
-
-
-    private fun FullTaskEntity.toDomainModel() =
-        TaskModel(
-            task.taskId,
-            location.locationId,
-            task.title,
-            task.description,
-            task.dueDate,
+    private fun TaskModel.toDbModel() =
+        TaskEntity(
+            taskId,
+            title,
+            description,
             location.latitude,
             location.longitude,
-            location.name,
-            task.status,
-            task.checked,
-            task.trip
+            dueDate,
+            status,
+            checkboxChecked,
+            tripActive
         )
 
-    companion object {
-        const val TAG = "TaskDbStore"
-    }
+    private fun TaskEntity.toDomainModel() =
+        TaskModel(
+            taskId,
+            title,
+            description,
+            dueDate,
+            LatLng(latitude, longitude),
+            status,
+            checked,
+            trip
+        )
 }

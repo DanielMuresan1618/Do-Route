@@ -47,7 +47,7 @@ object AlarmScheduler {
         val status = TaskStates.getStateForValue(task.status)
         val intent = Intent(context.applicationContext, AlarmReceiver::class.java).apply {
             action = context.getString(R.string.action_execute_task)
-            type = "$day-${task.title}-${task.locationName}-$status-create"
+            type = "$day-${task.title}-$status-create"
             putExtra(TaskModel.TASKID, task.taskId)
         }
 
@@ -71,7 +71,7 @@ object AlarmScheduler {
         // type must be unique so Intent.filterEquals passes the check to make distinct PendingIntents
         // Schedule the alarms based on the days to administer the medicine
         val status = TaskStates.getStateForValue(task.status)
-        val type = "${task.dueDate}-${task.title}-${task.locationName}-$status-remove"
+        val type = "${task.dueDate}-${task.title}-$status-remove"
 
         intent.type = type
         val alarmIntent = PendingIntent.getBroadcast(

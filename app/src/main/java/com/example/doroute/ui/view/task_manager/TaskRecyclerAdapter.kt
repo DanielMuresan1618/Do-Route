@@ -3,6 +3,7 @@ package com.example.doroute.ui.view.task_manager
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Context
+import android.location.Location
 
 import android.text.Editable
 import android.text.TextWatcher
@@ -170,7 +171,6 @@ class TaskRecyclerAdapter(
             itemView.task_title.setText(task.title)
             itemView.task_description.setText(task.description)
             itemView.task_due_date.text = task.dueDate.toString().substringBefore("GMT")
-            itemView.task_location.text = task.locationName
             itemView.taskCheckbox.isChecked = task.checkboxChecked
 
             when(task.status){

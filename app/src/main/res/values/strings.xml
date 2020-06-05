@@ -17,4 +17,7 @@
     <string name="title_activity_test">Map</string>
     <string name="group_notification_for">This is the %s notification group.</string>
     <string name="action_execute_task">com.example.doroute.action.TASK_DONE</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

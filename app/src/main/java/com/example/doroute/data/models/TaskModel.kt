@@ -1,21 +1,21 @@
 package com.example.doroute.data.models
 
 import com.example.doroute.helpers.TaskStates
+import com.google.android.gms.maps.model.LatLng
 import java.util.*
+import java.util.UUID.randomUUID
 
 data class TaskModel (
     var taskId: String,
-    var locationId: String,
     var title: String,
     var description: String,
     var dueDate: Date,
-    var latitude: Double,
-    var longitude: Double,
-    var locationName: String,
+    var location: LatLng,
     var status: Int,
     var checkboxChecked: Boolean = false,
     var tripActive: Boolean = false
 ){
+
     companion object {
         const val TASKID = "taskId"
         const val CHECKBOXCHECKED = "checkboxChecked"

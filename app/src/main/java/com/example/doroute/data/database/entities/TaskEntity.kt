@@ -17,6 +17,12 @@ data class TaskEntity(
     @ColumnInfo(name = "description")
     val description: String,
 
+    @ColumnInfo(name = "latitude")
+    val latitude: Double,
+
+    @ColumnInfo(name = "longitude")
+    val longitude: Double,
+
     @ColumnInfo(name = "due_date")
     val dueDate: Date,
 
