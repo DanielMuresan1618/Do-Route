@@ -22,7 +22,7 @@ import com.karumi.dexter.listener.single.PermissionListener
 
 
 class PermissionsActivity : AppCompatActivity() {
-    private lateinit var btnGrant:Button
+    private lateinit var btnGrant: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

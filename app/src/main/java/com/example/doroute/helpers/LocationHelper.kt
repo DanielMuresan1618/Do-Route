@@ -11,10 +11,10 @@ import com.google.android.gms.maps.MapView
 import com.google.android.gms.tasks.Task
 
 object LocationHelper {
-    private const val LOCATION_REQUEST_FASTEST_INTERVAL : Long = 5000
-    private const val LOCATION_REQUEST_INTERVAL : Long = 10000
+    private const val LOCATION_REQUEST_FASTEST_INTERVAL: Long = 5000
+    private const val LOCATION_REQUEST_INTERVAL: Long = 10000
 
-     fun getLocationRequest(): LocationRequest {
+    fun getLocationRequest(): LocationRequest {
         val locationRequest: LocationRequest = LocationRequest.create()
         locationRequest.interval = LOCATION_REQUEST_INTERVAL
         locationRequest.fastestInterval = LOCATION_REQUEST_FASTEST_INTERVAL
@@ -22,7 +22,7 @@ object LocationHelper {
         return locationRequest
     }
 
-     fun locationSettingRequest(activity: FragmentActivity, onSuccessCallback: ()-> Unit) {
+    fun locationSettingRequest(activity: FragmentActivity, onSuccessCallback: () -> Unit) {
         //check if gps is enabled or not and then request user to enable it
         val locationRequest: LocationRequest = LocationHelper.getLocationRequest()
         val builder: LocationSettingsRequest.Builder =
@@ -49,7 +49,7 @@ object LocationHelper {
             }
     }
 
-     fun findMyLocationButton(mapView: MapView) {
+    fun findMyLocationButton(mapView: MapView) {
         val locationButton =
             (mapView.findViewById<View>("1".toInt())
                 .parent as View).findViewById<View>("2".toInt())

@@ -14,9 +14,8 @@ object AlarmScheduler {
 
 
     fun scheduleAlarmsForTask(context: Context, task: TaskModel) {
-        val day = task.dueDate
         val alarmMgr = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val alarmIntent = createPendingIntent(context, task, day)
+        val alarmIntent = createPendingIntent(context, task)
         scheduleAlarm(task, alarmIntent, alarmMgr)
     }
 
@@ -42,15 +41,15 @@ object AlarmScheduler {
         }
     }
 
-    private fun createPendingIntent(context: Context, task: TaskModel, day: Date): PendingIntent? {
+    private fun createPendingIntent(context: Context, task: TaskModel): PendingIntent? {
         // create the intent using a unique type
         val status = TaskStates.getStateForValue(task.status)
         val intent = Intent(context.applicationContext, AlarmReceiver::class.java).apply {
             action = context.getString(R.string.action_execute_task)
-            type = "$day-${task.title}-$status-create"
+            // type must be unique so Intent.filterEquals passes the check to make distinct PendingIntents
+            type = "${task.dueDate}-${task.title}-$status-create"
             putExtra(TaskModel.TASKID, task.taskId)
         }
-
         return PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
     }
 
@@ -67,12 +66,9 @@ object AlarmScheduler {
         val intent = Intent(context.applicationContext, AlarmReceiver::class.java)
         intent.action = context.getString(R.string.action_execute_task)
         intent.putExtra(TaskModel.TASKID, task.taskId)
-
-        // type must be unique so Intent.filterEquals passes the check to make distinct PendingIntents
-        // Schedule the alarms based on the days to administer the medicine
         val status = TaskStates.getStateForValue(task.status)
+        // type must be unique so Intent.filterEquals passes the check to make distinct PendingIntents
         val type = "${task.dueDate}-${task.title}-$status-remove"
-
         intent.type = type
         val alarmIntent = PendingIntent.getBroadcast(
             context,

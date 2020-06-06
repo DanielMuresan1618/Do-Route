@@ -1,4 +1,4 @@
-package com.example.doroute.data.database.entities
+package com.example.doroute.data.database
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

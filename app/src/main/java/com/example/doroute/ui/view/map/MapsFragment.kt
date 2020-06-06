@@ -4,29 +4,26 @@ import android.app.Activity.RESULT_OK
 import android.app.AlertDialog
 import android.content.Context.INPUT_METHOD_SERVICE
 import android.content.Intent
-import android.content.IntentSender
 import android.location.Location
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
-import android.text.format.DateUtils
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import android.widget.RelativeLayout
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.doroute.R
 import com.example.doroute.data.database.RoomDatabase
-import com.example.doroute.data.domain.stores.TaskDbStore
+import com.example.doroute.data.domain.TaskDbStore
 import com.example.doroute.data.models.PolylineData
 import com.example.doroute.data.models.TaskModel
 import com.example.doroute.helpers.LocationHelper
@@ -34,8 +31,10 @@ import com.example.doroute.helpers.TaskStates
 import com.example.doroute.ui.viewmodel.TaskViewModel
 import com.example.doroute.ui.viewmodel.TaskViewModelFactory
 import com.google.android.gms.common.api.ApiException
-import com.google.android.gms.common.api.ResolvableApiException
-import com.google.android.gms.location.*
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationResult
+import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener
@@ -43,17 +42,14 @@ import com.google.android.gms.maps.GoogleMap.OnPolylineClickListener
 import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.*
-import com.google.android.gms.tasks.Task
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.AutocompletePrediction
 import com.google.android.libraries.places.api.model.AutocompleteSessionToken
 import com.google.android.libraries.places.api.model.Place
-import com.google.android.libraries.places.api.model.TypeFilter
 import com.google.android.libraries.places.api.net.FetchPlaceRequest
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsResponse
 import com.google.android.libraries.places.api.net.PlacesClient
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.maps.DirectionsApiRequest
 import com.google.maps.GeoApiContext
 import com.google.maps.PendingResult
@@ -62,16 +58,14 @@ import com.google.maps.model.DirectionsResult
 import com.mancj.materialsearchbar.MaterialSearchBar
 import com.mancj.materialsearchbar.MaterialSearchBar.OnSearchActionListener
 import com.mancj.materialsearchbar.adapter.SuggestionsAdapter
-import java.time.LocalDateTime
-import java.util.*
-import java.util.UUID.randomUUID
-import kotlin.collections.ArrayList
 
 
 class MapsFragment : Fragment(),
     OnMapReadyCallback,
     OnInfoWindowClickListener,
-    OnPolylineClickListener {
+    OnPolylineClickListener,
+    CreateNewTask.CreateWizardListener
+{
 
     private lateinit var rootView: View
 
@@ -228,11 +222,30 @@ class MapsFragment : Fragment(),
         }
     }
 
-    private fun onMapLongClick(latLng: LatLng) {
+    override fun addTask(task: TaskModel) {
+        taskViewModel.addTask(task)
+        addMapMarkerForTask(task)
+    }
 
-//        var taskModel:TaskModel
-//        taskViewModel.addTask(taskModel)
-//        addMapMarkerForTask(taskModel)
+    private fun onMapLongClick(latLng: LatLng) {
+        val dialog = CreateNewTask()
+        dialog.arguments
+        //add child fragment
+        dialog.setTargetFragment(this@MapsFragment, 1)
+        val transaction: FragmentTransaction = requireFragmentManager().beginTransaction()
+        transaction.replace(R.id.create_task_wizard,dialog)
+        transaction.addToBackStack(null)
+        transaction.commit()
+        dialog.show(childFragmentManager, "Create New Task")
+
+//        ft.replace(R.id.createNewTask,dialog)
+//        ft.commit()
+//        dialog.setTargetFragment(this@MapsFragment, 1)
+//
+//        childFragmentManager
+//            .beginTransaction()
+//            .add(R.id.createNewTask, dialog, "tag")
+//            .commit()
     }
 
     private fun resetMap() {

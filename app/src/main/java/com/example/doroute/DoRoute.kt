@@ -2,9 +2,9 @@ package com.example.doroute
 
 import android.app.Application
 import androidx.core.app.NotificationManagerCompat
-import com.example.doroute.notifications.NotificationHelper
+import com.example.doroute.helpers.NotificationHelper
 
-class DoRoute: Application() {
+class DoRoute : Application() {
     companion object {
         lateinit var instance: DoRoute
             private set
@@ -14,17 +14,25 @@ class DoRoute: Application() {
         super.onCreate()
         instance = this
 
-        NotificationHelper.createNotificationChannel(this,
+        NotificationHelper.createNotificationChannel(
+            this,
             NotificationManagerCompat.IMPORTANCE_DEFAULT, true,
-            getString(R.string.application_name), "App default notification channel.")
-        NotificationHelper.createNotificationChannel(this,
+            getString(R.string.application_name), "App default notification channel."
+        )
+        NotificationHelper.createNotificationChannel(
+            this,
             NotificationManagerCompat.IMPORTANCE_DEFAULT, false,
-            "OVERDUE", "Overdue tasks notification channel.")
-        NotificationHelper.createNotificationChannel(this,
+            "OVERDUE", "Overdue tasks notification channel."
+        )
+        NotificationHelper.createNotificationChannel(
+            this,
             NotificationManagerCompat.IMPORTANCE_DEFAULT, false,
-            "PENDING", "Pending tasks notification channel.")
-        NotificationHelper.createNotificationChannel(this,
+            "PENDING", "Pending tasks notification channel."
+        )
+        NotificationHelper.createNotificationChannel(
+            this,
             NotificationManagerCompat.IMPORTANCE_DEFAULT, false,
-            "COMPLETE", "Completed tasks notification channel.")
+            "COMPLETE", "Completed tasks notification channel."
+        )
     }
 }

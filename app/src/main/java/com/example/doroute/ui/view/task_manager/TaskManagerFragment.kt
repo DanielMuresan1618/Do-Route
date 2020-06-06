@@ -13,7 +13,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.doroute.R
 import com.example.doroute.data.database.RoomDatabase
-import com.example.doroute.data.domain.stores.TaskDbStore
+import com.example.doroute.data.domain.TaskDbStore
 import com.example.doroute.databinding.ActivityMainBinding
 import com.example.doroute.databinding.FragmentTaskManagerBinding
 import com.example.doroute.data.models.TaskModel

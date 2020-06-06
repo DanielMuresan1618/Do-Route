@@ -1,4 +1,4 @@
-package com.example.doroute.notifications
+package com.example.doroute.helpers
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -13,7 +13,6 @@ import com.example.doroute.AppGlobalReceiver
 import com.example.doroute.MainActivity
 import com.example.doroute.R
 import com.example.doroute.data.models.TaskModel
-import com.example.doroute.helpers.TaskStates
 
 
 object NotificationHelper {
@@ -38,26 +37,38 @@ object NotificationHelper {
 
             // Register the channel with the system
             val notificationManager = context.getSystemService(NotificationManager::class.java)
-            notificationManager.createNotificationChannel(channel)
+            notificationManager?.createNotificationChannel(channel)
         }
     }
 
     fun createNotificationForTask(context: Context, task: TaskModel, id: Int) {
 
         // create the task notification
-        val notificationBuilder = buildNotificationForTask(context, task)
+        val notificationBuilder =
+            buildNotificationForTask(
+                context,
+                task
+            )
 
         // add an action to the task notification
-        val taskPendingIntent = createPendingIntentForAction(context, task,id)
+        val taskPendingIntent =
+            createPendingIntentForAction(
+                context,
+                task,
+                id
+            )
         notificationBuilder.addAction(R.drawable.ic_done_green_24dp, "Do it!", taskPendingIntent)
 
         // call notify
         val notificationManager = NotificationManagerCompat.from(context)
-       notificationManager.notify(id, notificationBuilder.build())
+        notificationManager.notify(id, notificationBuilder.build())
     }
 
 
-    private fun buildNotificationForTask(context: Context, task: TaskModel): NotificationCompat.Builder {
+    private fun buildNotificationForTask(
+        context: Context,
+        task: TaskModel
+    ): NotificationCompat.Builder {
         val status = TaskStates.getStateForValue(task.status)
         val channelId = "${context.packageName}-${status}"
 
@@ -102,6 +113,9 @@ object NotificationHelper {
             putExtra(TaskModel.CHECKBOXCHECKED, true)
         }
 
-        return PendingIntent.getBroadcast(context, TASK_REQUEST_CODE, executeTaskIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+        return PendingIntent.getBroadcast(
+            context,
+            TASK_REQUEST_CODE, executeTaskIntent, PendingIntent.FLAG_UPDATE_CURRENT
+        )
     }
 }

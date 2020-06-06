@@ -1,9 +1,8 @@
-package com.example.doroute.data.domain.stores
+package com.example.doroute.data.domain
 
 import com.example.doroute.data.database.AppDatabase
-import com.example.doroute.data.database.entities.TaskEntity
+import com.example.doroute.data.database.TaskEntity
 import com.example.doroute.data.models.TaskModel
-import com.example.doroute.data.domain.Repository
 import com.google.android.gms.maps.model.LatLng
 
 class TaskDbStore(private val appDatabase: AppDatabase) : Repository {

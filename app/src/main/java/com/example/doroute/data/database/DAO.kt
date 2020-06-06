@@ -1,8 +1,6 @@
-package com.example.doroute.data.database.dao
+package com.example.doroute.data.database
 
 import androidx.room.*
-import com.example.doroute.data.database.entities.TaskEntity
-import com.google.android.gms.tasks.Task
 
 @Dao
 interface DAO {

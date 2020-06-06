@@ -7,15 +7,13 @@ import android.os.SystemClock
 import android.util.Log
 import com.example.doroute.R
 import com.example.doroute.data.database.RoomDatabase
-import com.example.doroute.data.domain.stores.TaskDbStore
+import com.example.doroute.data.domain.TaskDbStore
 import com.example.doroute.data.models.TaskModel
-import com.example.doroute.notifications.NotificationHelper
+import com.example.doroute.helpers.NotificationHelper
 import java.lang.NullPointerException
 
 class AlarmReceiver : BroadcastReceiver() {
     //emits notification for task
-    private val TAG = "AlarmReceiver"
-
     override fun onReceive(context: Context?, intent: Intent?) {
         Log.d(TAG, "onReceive() called with: context = [$context], intent = [$intent]")
         if (context != null && intent != null && intent.action != null) {
@@ -25,12 +23,13 @@ class AlarmReceiver : BroadcastReceiver() {
                 )
             ) {
                 if (intent.extras != null) {
-                    val repository = TaskDbStore(RoomDatabase.getDb(context.applicationContext))
+                    val repository = TaskDbStore(
+                        RoomDatabase.getDb(context)
+                    )
                     try {
                         val task: TaskModel? =
-                            repository.getTaskById(intent.extras!!.getString(TaskModel.TASKID)!!) //highly dangerous operation; there won't be stale data if broadcasts are called from livedata contexts
+                            repository.getTaskById(intent.extras!!.getString(TaskModel.TASKID)!!)
                         if (task != null) {
-                            Log.d(TAG, "Am primit un task ${task.status}")
                             val id = SystemClock.uptimeMillis().toInt()
                             NotificationHelper.createNotificationForTask(context, task, id)
                         }
@@ -40,5 +39,8 @@ class AlarmReceiver : BroadcastReceiver() {
                 }
             }
         }
+    }
+    companion object{
+        const val TAG = "AlarmReceiver"
     }
 }
