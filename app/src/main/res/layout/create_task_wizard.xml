@@ -1,7 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/create_task_wizard">
 
+    <EditText
+        android:id="@+id/wizard_task_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:ems="10"
+        android:hint="Enter task title"
+        android:inputType="textPersonName"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/wizard_task_description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:ems="10"
+        android:gravity="start|top"
+        android:hint="Enter task description"
+        android:inputType="textMultiLine"
+        app:layout_constraintStart_toStartOf="@+id/wizard_task_title"
+        app:layout_constraintTop_toBottomOf="@+id/wizard_task_title" />
+
+    <EditText
+        android:id="@+id/wizard_task_dueDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:ems="10"
+        android:hint="Pick a due date"
+        android:inputType="date"
+        app:layout_constraintStart_toStartOf="@+id/wizard_task_description"
+        app:layout_constraintTop_toBottomOf="@+id/wizard_task_description" />
 </androidx.constraintlayout.widget.ConstraintLayout>

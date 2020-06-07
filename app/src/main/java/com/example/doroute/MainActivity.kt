@@ -10,8 +10,6 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import com.example.doroute.data.models.TaskModel
-import com.example.doroute.ui.view.map.CreateNewTask
 import com.google.android.material.navigation.NavigationView
 
 class MainActivity : AppCompatActivity(){

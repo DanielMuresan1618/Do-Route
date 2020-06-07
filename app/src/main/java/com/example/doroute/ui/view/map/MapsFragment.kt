@@ -2,6 +2,8 @@ package com.example.doroute.ui.view.map
 
 import android.app.Activity.RESULT_OK
 import android.app.AlertDialog
+import android.app.DatePickerDialog
+import android.app.TimePickerDialog
 import android.content.Context.INPUT_METHOD_SERVICE
 import android.content.Intent
 import android.location.Location
@@ -15,10 +17,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.doroute.R
@@ -58,14 +60,17 @@ import com.google.maps.model.DirectionsResult
 import com.mancj.materialsearchbar.MaterialSearchBar
 import com.mancj.materialsearchbar.MaterialSearchBar.OnSearchActionListener
 import com.mancj.materialsearchbar.adapter.SuggestionsAdapter
+import kotlinx.android.synthetic.main.create_task_wizard.*
+import kotlinx.android.synthetic.main.create_task_wizard.view.*
+import java.util.*
+import java.util.UUID.randomUUID
+import kotlin.collections.ArrayList
 
 
 class MapsFragment : Fragment(),
     OnMapReadyCallback,
     OnInfoWindowClickListener,
-    OnPolylineClickListener,
-    CreateNewTask.CreateWizardListener
-{
+    OnPolylineClickListener {
 
     private lateinit var rootView: View
 
@@ -172,18 +177,17 @@ class MapsFragment : Fragment(),
         resetMap()
         taskViewModel.retrieveTasks()
         mTasks?.forEach {
-            Log.d(
-                TAG,
-                "Task: ${it.taskId} , trip: ${it.tripActive}, status: ${TaskStates.getStateForValue(
-                    it.status
-                )}"
-            )
             if (it.status != TaskStates.COMPLETE) {
                 addMapMarkerForTask(it)
                 if (it.tripActive)
                     loadPolylinesFromTasks(it)
             }
         }
+    }
+
+    private fun addTask(task: TaskModel){
+        taskViewModel.addTask(task)
+        addMapMarkerForTask(task)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -222,30 +226,61 @@ class MapsFragment : Fragment(),
         }
     }
 
-    override fun addTask(task: TaskModel) {
-        taskViewModel.addTask(task)
-        addMapMarkerForTask(task)
-    }
-
     private fun onMapLongClick(latLng: LatLng) {
-        val dialog = CreateNewTask()
-        dialog.arguments
-        //add child fragment
-        dialog.setTargetFragment(this@MapsFragment, 1)
-        val transaction: FragmentTransaction = requireFragmentManager().beginTransaction()
-        transaction.replace(R.id.create_task_wizard,dialog)
-        transaction.addToBackStack(null)
-        transaction.commit()
-        dialog.show(childFragmentManager, "Create New Task")
+        val now = Calendar.getInstance(Locale.getDefault())
+        val builder = AlertDialog.Builder(activity);
+        val inflater = layoutInflater
+        val view = inflater.inflate(R.layout.create_task_wizard, null)
+//        Populate a random field just to see whether it works
+        val dueDateField = view.findViewById(R.id.wizard_task_dueDate) as EditText
+        var dueDate = now.time
+        dueDateField.setOnClickListener {
+            val selectedCalendar = Calendar.getInstance(Locale.getDefault()) // variable to collect custom date and time
+            val datePicker = DatePickerDialog(
+                requireContext(),
+                DatePickerDialog.OnDateSetListener { _, year, month, dayOfMonth ->
+                    //since the listener runs only after the user finished to pick a date...
+                    selectedCalendar.set(Calendar.YEAR, year)
+                    selectedCalendar.set(Calendar.MONTH, month)
+                    selectedCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+                    val timePicker = TimePickerDialog(
+                        context,
+                        TimePickerDialog.OnTimeSetListener { _, hourOfDay, minute ->
+                            //... I can simulate an async behavior by using only the flow logic...
+                            selectedCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay)
+                            selectedCalendar.set(Calendar.MINUTE, minute)
+                            selectedCalendar.set(Calendar.SECOND, 0)
+                            selectedCalendar.set(Calendar.MILLISECOND, 0)
+                            dueDateField.setText(selectedCalendar.time.toString())
+                            dueDate = selectedCalendar.time
+                        },
+                        now.get(Calendar.HOUR_OF_DAY),
+                        now.get(Calendar.MINUTE),
+                        false
+                    )
+                    //...and without spoiling the UX
+                    timePicker.show()
+                },
+                now.get(Calendar.YEAR),
+                now.get(Calendar.MONTH),
+                now.get(Calendar.DAY_OF_MONTH)
+            )
+            datePicker.show()
+        }
+        builder.setTitle("Create Task")
+            .setCancelable(false)
+            .setIcon(R.drawable.ic_tasks)
+            .setView(view)
+            .setCancelable(true)
+            .setPositiveButton("Submit") { iDialog, which ->
+                val title = view.wizard_task_title.text.toString()
+                val description = view.wizard_task_description.text.toString()
+                val task = TaskModel(randomUUID().toString(), title, description, dueDate,latLng,TaskStates.PENDING,false,false)
+                addTask(task)
+            }
+        builder.create()
+        builder.show()
 
-//        ft.replace(R.id.createNewTask,dialog)
-//        ft.commit()
-//        dialog.setTargetFragment(this@MapsFragment, 1)
-//
-//        childFragmentManager
-//            .beginTransaction()
-//            .add(R.id.createNewTask, dialog, "tag")
-//            .commit()
     }
 
     private fun resetMap() {

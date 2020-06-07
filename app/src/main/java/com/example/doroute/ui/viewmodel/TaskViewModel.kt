@@ -31,9 +31,10 @@ class TaskViewModel(private val repository: Repository) : ViewModel() {
 
     fun addTask(task:TaskModel) {
         //I pass context because I need it for the alarm scheduler
+        val refined_task = decideState(task)
         repository.addTask(task)
         retrieveTasks()
-        AlarmScheduler.scheduleAlarmsForTask(DoRoute.instance.applicationContext, task)
+        AlarmScheduler.scheduleAlarmsForTask(DoRoute.instance.applicationContext, refined_task)
     }
 
     fun removeTask(task: TaskModel) {
@@ -43,8 +44,23 @@ class TaskViewModel(private val repository: Repository) : ViewModel() {
     }
 
     fun updateTask(task: TaskModel){
-        repository.updateTask(task)
+        val refined_task = decideState(task)
+        repository.updateTask(refined_task)
         retrieveTasks()
-        AlarmScheduler.updateAlarmsForReminder(DoRoute.instance.applicationContext, task)
+        AlarmScheduler.updateAlarmsForReminder(DoRoute.instance.applicationContext, refined_task)
+    }
+
+    private fun decideState(task: TaskModel): TaskModel {
+        val now = Calendar.getInstance(Locale.getDefault())
+        if (!task.checkboxChecked)
+            if(task.dueDate.before(now.time))
+                task.status = TaskStates.OVERDUE
+            else
+                task.status = TaskStates.PENDING
+        else {
+            task.status = TaskStates.COMPLETE
+            task.tripActive = false
+        }
+        return task
     }
 }

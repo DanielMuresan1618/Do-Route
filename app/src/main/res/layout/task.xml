@@ -19,12 +19,12 @@
             android:layout_width="26dp"
             android:layout_height="22dp"
             android:layout_marginTop="16dp"
-            app:layout_constraintEnd_toStartOf="@+id/task_title"
+            app:layout_constraintEnd_toStartOf="@+id/wizard_task_title"
             app:layout_constraintStart_toEndOf="@+id/task_delete"
             app:layout_constraintTop_toTopOf="parent" />
 
         <EditText
-            android:id="@+id/task_title"
+            android:id="@+id/wizard_task_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
 
@@ -48,15 +48,15 @@
             app:srcCompat="@drawable/ic_delete_forever_black_24dp" />
 
         <EditText
-            android:id="@+id/task_description"
+            android:id="@+id/wizard_task_description"
             android:layout_width="242dp"
             android:layout_height="62dp"
             android:ems="10"
             android:inputType="textPersonName"
             android:text="Task Description"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/task_title"
-            app:layout_constraintTop_toBottomOf="@+id/task_title" />
+            app:layout_constraintStart_toStartOf="@+id/wizard_task_title"
+            app:layout_constraintTop_toBottomOf="@+id/wizard_task_title" />
 
         <ImageView
             android:id="@+id/task_status"
@@ -83,8 +83,8 @@
             android:textSize="10sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/task_description"
-            app:layout_constraintTop_toBottomOf="@+id/task_title" />
+            app:layout_constraintStart_toEndOf="@+id/wizard_task_description"
+            app:layout_constraintTop_toBottomOf="@+id/wizard_task_title" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

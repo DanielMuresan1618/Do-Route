@@ -14,8 +14,4 @@
         android:name="com.example.doroute.ui.view.map.MapsFragment"
         android:label="Map"
         tools:layout="@layout/fragment_maps" />
-    <dialog
-        android:id="@id/create_task_wizard"
-        android:name="com.example.doroute.ui.view.map.CreateNewTask"
-        android:label="Create New Task"/>
 </navigation>

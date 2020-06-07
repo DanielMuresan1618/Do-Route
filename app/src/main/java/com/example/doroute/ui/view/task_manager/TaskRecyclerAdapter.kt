@@ -56,12 +56,12 @@ class TaskRecyclerAdapter(
         init {
             now = Calendar.getInstance(Locale.getDefault())
             itemView.task_delete.setOnClickListener { onDeleteClick(tasks[adapterPosition]) }
-            itemView.task_title.setOnFocusChangeListener(this::onFocusChange)
-            itemView.task_description.setOnFocusChangeListener(this::onFocusChange)
-            itemView.task_description.addTextChangedListener(object : TextWatcher {
+            itemView.wizard_task_title.setOnFocusChangeListener(this::onFocusChange)
+            itemView.wizard_task_description.setOnFocusChangeListener(this::onFocusChange)
+            itemView.wizard_task_description.addTextChangedListener(object : TextWatcher {
                 override fun afterTextChanged(s: Editable?) {
                     editingFinished = true
-                    tasks[adapterPosition].description = itemView.task_description.text.toString()
+                    tasks[adapterPosition].description = itemView.wizard_task_description.text.toString()
                 }
 
                 override fun beforeTextChanged(
@@ -74,10 +74,10 @@ class TaskRecyclerAdapter(
 
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             })
-            itemView.task_title.addTextChangedListener(object : TextWatcher {
+            itemView.wizard_task_title.addTextChangedListener(object : TextWatcher {
                 override fun afterTextChanged(s: Editable?) {
                     editingFinished = true
-                    tasks[adapterPosition].title = itemView.task_title.text.toString()
+                    tasks[adapterPosition].title = itemView.wizard_task_title.text.toString()
                 }
 
                 override fun beforeTextChanged(
@@ -96,14 +96,13 @@ class TaskRecyclerAdapter(
             itemView.task_due_date.setOnClickListener(this::setDueDate)
             itemView.taskCheckbox.setOnClickListener { view ->
                 tasks[adapterPosition].checkboxChecked = !tasks[adapterPosition].checkboxChecked
-                setStatusForTask()
                 onUpdate(tasks[adapterPosition]) //onUpdate created a lot of problems...
             }
         }
 
         fun bind(task: TaskModel) {
-            itemView.task_title.setText(task.title)
-            itemView.task_description.setText(task.description)
+            itemView.wizard_task_title.setText(task.title)
+            itemView.wizard_task_description.setText(task.description)
             itemView.task_due_date.text = task.dueDate.toString().substringBefore("GMT")
             itemView.taskCheckbox.isChecked = task.checkboxChecked
 
@@ -111,20 +110,6 @@ class TaskRecyclerAdapter(
                 TaskStates.COMPLETE -> itemView.task_status.setImageResource(R.drawable.ic_done_green_24dp)
                 TaskStates.OVERDUE -> itemView.task_status.setImageResource(R.drawable.ic_overdue_red_24dp)
                 TaskStates.PENDING -> itemView.task_status.setImageResource(R.drawable.ic_pending_yellow_24dp)
-            }
-        }
-
-        private fun setStatusForTask() {
-            //setOnCheckedChangeListener IS GARBAGE!!!!!!
-            now = Calendar.getInstance(Locale.getDefault())
-            if (!tasks[adapterPosition].checkboxChecked) {
-                if (tasks[adapterPosition].dueDate.before(now.time))
-                    tasks[adapterPosition].status = TaskStates.OVERDUE
-                else
-                    tasks[adapterPosition].status = TaskStates.PENDING
-            } else {
-                tasks[adapterPosition].status = TaskStates.COMPLETE
-                tasks[adapterPosition].tripActive = false
             }
         }
 
@@ -150,7 +135,6 @@ class TaskRecyclerAdapter(
                             itemView.task_due_date.text = selectedCalendar.time.toString()
                             //this will update the db too
                             tasks[adapterPosition].dueDate = selectedCalendar.time
-                            setStatusForTask()
                             onUpdate(tasks[adapterPosition]) //onUpdate created a lot of problems...
                         },
                         now.get(Calendar.HOUR_OF_DAY),
