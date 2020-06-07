@@ -73,7 +73,7 @@ object NotificationHelper {
         val channelId = "${context.packageName}-${status}"
 
         return NotificationCompat.Builder(context, channelId).apply {
-            setSmallIcon(R.drawable.logout_icon_24dp)
+            setSmallIcon(R.drawable.ic_doroute_logo)
             setContentTitle(task.title)
             setAutoCancel(true)
 

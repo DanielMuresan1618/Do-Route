@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#2246a1</color>
-    <color name="colorPrimaryDark">#00574B</color>
-    <color name="colorAccent">#D81B60</color>
-    <color name="colorTaskOverdue">#D80000</color>7
-    <color name="colorTaskPending">#FDE935</color>7
+    <color name="colorPrimary">#328004</color>
+    <color name="colorPrimaryDark">@color/colorPrimary</color>
+    <color name="colorAccent">@color/colorPrimary</color>
+    <color name="colorTaskOverdue">#D80000</color>
+    <color name="colorTaskPending">#FDE935</color>
+    <color name="colorPolylineSelected">#3638A3</color>
+    <color name="colorPolylineNotSelected">#67595968</color>
 
 </resources>
