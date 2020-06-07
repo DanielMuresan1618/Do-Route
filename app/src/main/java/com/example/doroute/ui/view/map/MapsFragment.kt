@@ -98,11 +98,13 @@ class MapsFragment : Fragment(),
     override fun onResume() {
         super.onResume()
         mapView?.onResume()
+        syncMap()
     }
 
     override fun onStart() {
         super.onStart()
         mapView?.onStart()
+        syncMap()
     }
 
     override fun onStop() {
@@ -111,13 +113,13 @@ class MapsFragment : Fragment(),
     }
 
     override fun onPause() {
-        mapView?.onPause()
         super.onPause()
+        mapView?.onPause()
     }
 
     override fun onDestroy() {
-        mapView?.onDestroy()
         super.onDestroy()
+        mapView?.onDestroy()
     }
 
     override fun onLowMemory() {
@@ -269,7 +271,7 @@ class MapsFragment : Fragment(),
         }
         builder.setTitle("Create Task")
             .setCancelable(false)
-            .setIcon(R.drawable.ic_tasks)
+            .setIcon(R.drawable.ic_schedule)
             .setView(view)
             .setCancelable(true)
             .setPositiveButton("Submit") { iDialog, which ->
@@ -433,7 +435,7 @@ class MapsFragment : Fragment(),
             //val task = taskViewModel.getTaskByLocation(endLocation)
             if (polyline.id == polylineData.polyline.id) {
                 polylineData.polyline.color =
-                    ContextCompat.getColor(requireContext(), R.color.colorTaskOverdue)
+                    ContextCompat.getColor(requireContext(), R.color.colorPolylineSelected)
                 polylineData.polyline.zIndex = 1.0F
                 val marker: Marker = mMap!!.addMarker(
                     MarkerOptions()
@@ -445,7 +447,7 @@ class MapsFragment : Fragment(),
                 marker.showInfoWindow()
             } else {
                 polylineData.polyline.color =
-                    ContextCompat.getColor(requireContext(), R.color.colorPrimary)
+                    ContextCompat.getColor(requireContext(), R.color.colorPolylineNotSelected)
                 polylineData.polyline.zIndex = 0F
             }
         }

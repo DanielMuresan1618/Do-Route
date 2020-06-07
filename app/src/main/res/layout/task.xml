@@ -49,12 +49,13 @@
 
         <EditText
             android:id="@+id/wizard_task_description"
-            android:layout_width="242dp"
-            android:layout_height="62dp"
+            android:layout_width="0dp"
+            android:layout_height="54dp"
             android:ems="10"
             android:inputType="textPersonName"
             android:text="Task Description"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/task_due_date"
             app:layout_constraintStart_toStartOf="@+id/wizard_task_title"
             app:layout_constraintTop_toBottomOf="@+id/wizard_task_title" />
 
@@ -76,11 +77,13 @@
             android:id="@+id/task_due_date"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="4dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="16dp"
             android:ems="10"
             android:inputType="date"
             android:text="02/05/2020"
-            android:textSize="10sp"
+            android:textAlignment="viewEnd"
+            android:textSize="12sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/wizard_task_description"

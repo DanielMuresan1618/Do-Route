@@ -11,14 +11,17 @@
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:foregroundTint="#220101"
         android:theme="@style/AppTheme.AppBarOverlay">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />
+            android:background="@color/doroute_logo_background"
+            android:foregroundTint="#000000"
+            app:popupTheme="@style/AppTheme.PopupOverlay"
+            app:titleTextColor="#415E10" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
