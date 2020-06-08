@@ -170,8 +170,8 @@ class MapsFragment : Fragment(),
                 taskFactory
             ).get(TaskViewModel::class.java)
         }
-
         initSearchBar()
+        syncMap()
     }
 
     private fun syncMap() {
