@@ -44,6 +44,7 @@ class TaskViewModel(private val repository: Repository) : ViewModel() {
     }
 
     fun updateTask(task: TaskModel){
+        AlarmScheduler.removeAlarmsForTask(DoRoute.instance.applicationContext, task) //the old alarm is deprecated
         val refined_task = decideState(task)
         repository.updateTask(refined_task)
         retrieveTasks()

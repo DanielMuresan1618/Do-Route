@@ -51,17 +51,16 @@ class TaskRecyclerAdapter(
 
 
     inner class TaskViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private var now: Calendar
+        private var now: Calendar = Calendar.getInstance(Locale.getDefault())
 
         init {
-            now = Calendar.getInstance(Locale.getDefault())
             itemView.task_delete.setOnClickListener { onDeleteClick(tasks[adapterPosition]) }
-            itemView.wizard_task_title.setOnFocusChangeListener(this::onFocusChange)
-            itemView.wizard_task_description.setOnFocusChangeListener(this::onFocusChange)
-            itemView.wizard_task_description.addTextChangedListener(object : TextWatcher {
+            itemView.task_title.setOnFocusChangeListener(this::onFocusChange)
+            itemView.task_description.setOnFocusChangeListener(this::onFocusChange)
+            itemView.task_description.addTextChangedListener(object : TextWatcher {
                 override fun afterTextChanged(s: Editable?) {
                     editingFinished = true
-                    tasks[adapterPosition].description = itemView.wizard_task_description.text.toString()
+                    tasks[adapterPosition].description = itemView.task_description.text.toString()
                 }
 
                 override fun beforeTextChanged(
@@ -74,10 +73,10 @@ class TaskRecyclerAdapter(
 
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             })
-            itemView.wizard_task_title.addTextChangedListener(object : TextWatcher {
+            itemView.task_title.addTextChangedListener(object : TextWatcher {
                 override fun afterTextChanged(s: Editable?) {
                     editingFinished = true
-                    tasks[adapterPosition].title = itemView.wizard_task_title.text.toString()
+                    tasks[adapterPosition].title = itemView.task_title.text.toString()
                 }
 
                 override fun beforeTextChanged(
@@ -101,9 +100,9 @@ class TaskRecyclerAdapter(
         }
 
         fun bind(task: TaskModel) {
-            itemView.wizard_task_title.setText(task.title)
-            itemView.wizard_task_description.setText(task.description)
-            itemView.task_due_date.text = task.dueDate.toString().substringBefore("GMT")
+            itemView.task_title.setText(task.title)
+            itemView.task_description.setText(task.description)
+            itemView.task_due_date.text = task.dueDate.toString().substringBefore("GMT") //formatare dată
             itemView.taskCheckbox.isChecked = task.checkboxChecked
 
             when (task.status) {
@@ -152,7 +151,7 @@ class TaskRecyclerAdapter(
         }
 
         private fun onFocusChange(view: View, hasFocus: Boolean) {
-            if (!hasFocus && editingFinished) {
+            if (!hasFocus && editingFinished) { //prevents pointless updates
                 editingFinished = false
                 onUpdate(tasks[adapterPosition])
             }

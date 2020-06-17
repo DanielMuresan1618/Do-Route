@@ -95,38 +95,6 @@ class MapsFragment : Fragment(),
     //widgets
     private lateinit var materialSearchBar: MaterialSearchBar
 
-    override fun onResume() {
-        super.onResume()
-        mapView?.onResume()
-        syncMap()
-    }
-
-    override fun onStart() {
-        super.onStart()
-        mapView?.onStart()
-        syncMap()
-    }
-
-    override fun onStop() {
-        super.onStop()
-        mapView?.onStop()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        mapView?.onPause()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        mapView?.onDestroy()
-    }
-
-    override fun onLowMemory() {
-        super.onLowMemory()
-        mapView?.onLowMemory()
-    }
-
     //Lifecycle
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -171,18 +139,17 @@ class MapsFragment : Fragment(),
             ).get(TaskViewModel::class.java)
         }
         initSearchBar()
-        syncMap()
     }
 
     private fun syncMap() {
-        Log.d(TAG, "SYNC")
-        resetMap()
+        mMap?.clear()
+        removePolylinesData()
         taskViewModel.retrieveTasks()
-        mTasks?.forEach {
-            if (it.status != TaskStates.COMPLETE) {
-                addMapMarkerForTask(it)
-                if (it.tripActive)
-                    loadPolylinesFromTasks(it)
+        mTasks?.forEach {task ->
+            if (task.status != TaskStates.COMPLETE) {
+                addMapMarkerForTask(task)
+                if (task.tripActive)
+                    loadPolylinesFromTasks(task)
             }
         }
     }
@@ -190,6 +157,38 @@ class MapsFragment : Fragment(),
     private fun addTask(task: TaskModel){
         taskViewModel.addTask(task)
         addMapMarkerForTask(task)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        mapView?.onResume()
+        syncMap()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        mapView?.onStart()
+        syncMap()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        mapView?.onStop()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        mapView?.onPause()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mapView?.onDestroy()
+    }
+
+    override fun onLowMemory() {
+        super.onLowMemory()
+        mapView?.onLowMemory()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -211,7 +210,6 @@ class MapsFragment : Fragment(),
         mMap!!.setOnMapLongClickListener(this::onMapLongClick)
         mMap!!.setOnPolylineClickListener(this)
         LocationHelper.findMyLocationButton(mapView!!)
-
         LocationHelper.locationSettingRequest(activity, this::getDeviceLocation)
 
         //Observers
@@ -226,6 +224,7 @@ class MapsFragment : Fragment(),
             if (materialSearchBar.isSearchEnabled) materialSearchBar.disableSearch()
             false
         }
+        syncMap()
     }
 
     private fun onMapLongClick(latLng: LatLng) {
@@ -282,12 +281,34 @@ class MapsFragment : Fragment(),
             }
         builder.create()
         builder.show()
-
     }
 
-    private fun resetMap() {
-        mMap?.clear()
-        removePolylinesData()
+
+
+    private fun loadPolylinesFromTasks(task: TaskModel) {
+        if (mLastKnownLocation != null) {
+            val origin = com.google.maps.model.LatLng(
+                mLastKnownLocation!!.latitude, mLastKnownLocation!!.longitude
+            )
+            val destination: com.google.maps.model.LatLng =
+                com.google.maps.model.LatLng(task.location.latitude, task.location.longitude)
+            calculateDirections(origin, destination)
+        }
+    }
+
+
+    //Markers
+    private fun addMapMarkerForTask(task: TaskModel) {
+        mMap!!.setOnInfoWindowClickListener(this)
+        val avatar: Int = R.drawable.map_marker
+        val time = task.dueDate.toString().substringBefore("GMT")
+        val markerOptions = MarkerOptions()
+            .position(LatLng(task.location.latitude, task.location.longitude))
+            .icon(BitmapDescriptorFactory.fromResource(avatar))
+            .title(task.title)
+            .snippet(time)
+        val marker = mMap!!.addMarker(markerOptions)
+        marker.showInfoWindow()
     }
 
     private fun getDeviceLocation() {
@@ -304,7 +325,7 @@ class MapsFragment : Fragment(),
                         )
                     )
                 } else {
-                    computeLatestLocation()
+                    computeLatestLocation() //requests for a new location
                 }
             } else {
                 Toast.makeText(activity, "unable to get last location", Toast.LENGTH_SHORT).show()
@@ -342,31 +363,6 @@ class MapsFragment : Fragment(),
         )
     }
 
-    private fun loadPolylinesFromTasks(task: TaskModel) {
-        if (mLastKnownLocation != null) {
-            val origin = com.google.maps.model.LatLng(
-                mLastKnownLocation!!.latitude, mLastKnownLocation!!.longitude
-            )
-            val destination: com.google.maps.model.LatLng =
-                com.google.maps.model.LatLng(task.location.latitude, task.location.longitude)
-            calculateDirections(origin, destination)
-        }
-    }
-
-
-    //Markers
-    private fun addMapMarkerForTask(task: TaskModel) {
-        mMap!!.setOnInfoWindowClickListener(this)
-        val avatar: Int = R.drawable.map_marker
-        val time = task.dueDate.toString().substringBefore("GMT")
-        val markerOptions = MarkerOptions()
-            .position(LatLng(task.location.latitude, task.location.longitude))
-            .icon(BitmapDescriptorFactory.fromResource(avatar))
-            .title(task.title)
-            .snippet(time)
-        val marker = mMap!!.addMarker(markerOptions)
-        marker.showInfoWindow()
-    }
 
 
     private fun calculateDirections(
@@ -380,25 +376,17 @@ class MapsFragment : Fragment(),
         directions.setCallback(object : PendingResult.Callback<DirectionsResult?> {
             override fun onResult(result: DirectionsResult?) {
                 if (result != null) {
-//                    Log.d(TAG, "calculateDirections: routes: " + result.routes[0].toString())
-//                    Log.d(TAG, "calculateDirections: duration: " + result.routes[0].legs[0].duration)
-//                    Log.d(TAG, "calculateDirections: distance: " + result.routes[0].legs[0].distance)
-//                    Log.d(TAG, "calculateDirections: geocodedWayPoints: " + result.geocodedWaypoints[0].toString())
                     addPolylinesToMap(result)
                 }
             }
-
-            override fun onFailure(e: Throwable) {
-                Log.e(TAG, "calculateDirections: Failed to get directions: " + e.message)
-            }
+            override fun onFailure(e: Throwable) {}
         })
-
     }
 
     override fun onInfoWindowClick(marker: Marker) {
         //marks a task's tripActive with true and creates polylines for the task whose location is equal to marker's
         AlertDialog.Builder(activity)
-            .setMessage(marker.snippet)
+            .setMessage("Do you want to start a trip to this task?")
             .setCancelable(true)
             .setPositiveButton("Yes") { dialog, id ->
 
@@ -481,8 +469,8 @@ class MapsFragment : Fragment(),
 
     private fun removePolylinesData() {
         if (mPolyLinesData.isNotEmpty()) {
-            mPolyLinesData.forEach {
-                it.polyline.remove() //safe delete
+            mPolyLinesData.forEach {polyLineData ->
+                polyLineData.polyline.remove() //safe delete
             }
             mPolyLinesData.clear()
         }
@@ -491,7 +479,7 @@ class MapsFragment : Fragment(),
     //Widgets
     private fun initSearchBar() {
         materialSearchBar = rootView.findViewById(R.id.searchBar)
-        materialSearchBar.setNavButtonEnabled(false)
+        materialSearchBar.setNavButtonEnabled(false) //Hide navigation button
         materialSearchBar.setOnSearchActionListener(object : OnSearchActionListener {
             override fun onSearchStateChanged(enabled: Boolean) {}
             override fun onSearchConfirmed(text: CharSequence) {
@@ -554,7 +542,7 @@ class MapsFragment : Fragment(),
                 val suggestion =
                     materialSearchBar.lastSuggestions[position].toString()
                 materialSearchBar.text = suggestion
-                Handler().postDelayed(Runnable { materialSearchBar.clearSuggestions() }, 1000)
+                Handler().postDelayed({ materialSearchBar.clearSuggestions() }, 1000)
 
                 val imm: InputMethodManager? =
                     requireActivity().getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager?

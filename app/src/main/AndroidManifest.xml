@@ -25,11 +25,12 @@
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="@string/mapsKey" />
+            android:value="@string/mapsKey" /> <!-- valoarea cheii se preia dintr-un loc anume,
+             nu trebuie definită direct în manifest din considerente de securitate -->
+
         <activity android:name=".PermissionsActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

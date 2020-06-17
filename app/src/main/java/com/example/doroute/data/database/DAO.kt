@@ -4,7 +4,6 @@ import androidx.room.*
 
 @Dao
 interface DAO {
-    //Simplified DAO
 
     @Transaction
     @Query("SELECT * FROM tasks ORDER BY  status DESC, due_date DESC")
@@ -29,5 +28,4 @@ interface DAO {
     @Transaction
     @Update
     fun updateTask(task: TaskEntity)
-
 }

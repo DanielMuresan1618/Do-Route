@@ -19,7 +19,7 @@ data class TaskModel (
     companion object {
         const val TASKID = "taskId"
         const val CHECKBOXCHECKED = "checkboxChecked"
-        const val TRIPACTIVE = "tripActive"
+//        const val TRIPACTIVE = "tripActive"
 //        const val LOCATIONID = "locationId"
 //        const val TITLE = "title"
 //        const val DESCRIPTION = "description"

@@ -56,17 +56,17 @@ class PermissionsActivity : AppCompatActivity() {
                                 .setMessage("Permission to access device location is permanently denied. you need to go to setting to allow the permission.")
                                 .setNegativeButton("Cancel", null)
                                 .setPositiveButton(
-                                    "OK",
-                                    DialogInterface.OnClickListener { dialog, which ->
-                                        val intent = Intent()
-                                        intent.action =
-                                            Settings.ACTION_APPLICATION_DETAILS_SETTINGS
-                                        intent.data = Uri.fromParts(
-                                            "package",
-                                            packageName,
-                                            null
-                                        )
-                                    })
+                                    "OK"
+                                ) { dialog, which ->
+                                    val intent = Intent()
+                                    intent.action =
+                                        Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+                                    intent.data = Uri.fromParts(
+                                        "package",
+                                        packageName,
+                                        null
+                                    )
+                                }
                                 .show()
                         } else {
                             Toast.makeText(

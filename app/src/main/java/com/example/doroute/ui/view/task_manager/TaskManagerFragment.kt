@@ -25,13 +25,10 @@ import viewLifecycle
 
 class TaskManagerFragment : Fragment() {
 
-    private val CHANNEL_ID: String = "channel1"
-    private lateinit var notificationBuilder: NotificationCompat.Builder
     private lateinit var taskAdapter: TaskRecyclerAdapter
     private lateinit var viewModel: TaskViewModel
     private lateinit var binding: FragmentTaskManagerBinding
     private val main_binding by viewLifecycle { ActivityMainBinding.bind(requireView()) }
-
 
     // View initialization logic
     override fun onCreateView(
@@ -54,6 +51,7 @@ class TaskManagerFragment : Fragment() {
                     )
                 )
             )
+
         viewModel = requireActivity().run {
             ViewModelProvider(
                 this,
@@ -65,13 +63,7 @@ class TaskManagerFragment : Fragment() {
         initRecyclerView()
     }
 
-    override fun onResume() {
-        super.onResume()
-        viewModel.retrieveTasks()
-    }
-
     private fun initRecyclerView() {
-
         recycler_view.apply {
             layoutManager = LinearLayoutManager(this@TaskManagerFragment.requireContext())
         }
@@ -81,21 +73,20 @@ class TaskManagerFragment : Fragment() {
             )
         )
         viewModel.tasksLiveData.observe(viewLifecycleOwner, Observer {
-            taskAdapter =
-                TaskRecyclerAdapter(
-                    requireActivity(),
-                    it,
-                    this::delete,
-                    this::update
-                )
-            recycler_view.adapter = taskAdapter
+            taskAdapter = TaskRecyclerAdapter(
+                requireActivity(),
+                it,
+                this::delete,
+                this::update
+            )
+            recycler_view.adapter = taskAdapter //the adapter gets updated every time the live data refreshes
         })
         recycler_view.isNestedScrollingEnabled = false
+        viewModel.retrieveTasks() //initial fetch
     }
 
     private fun update(task: TaskModel) {
         viewModel.updateTask(task)
-
     }
 
     private fun delete(task: TaskModel) {
