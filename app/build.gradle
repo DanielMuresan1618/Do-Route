@@ -4,12 +4,12 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 30
     buildToolsVersion "29.0.2"
     defaultConfig {
         applicationId "com.example.doroute"
         minSdkVersion 21
-        targetSdkVersion 29
+        targetSdkVersion 30
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -52,10 +52,10 @@ dependencies {
     implementation 'com.karumi:dexter:6.1.0'
 
     //Fragments
-    implementation 'androidx.fragment:fragment-ktx:1.2.4'
+    implementation 'androidx.fragment:fragment-ktx:1.2.5'
 
     //Google Play Services
-    api 'com.google.android.gms:play-services-auth:18.0.0'
+    api 'com.google.android.gms:play-services-auth:18.1.0'
 
     // Google Maps Services (needed for directions)
     implementation 'com.google.android.gms:play-services-maps:17.0.0'
@@ -93,10 +93,10 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 
     //Navigation
-    implementation 'androidx.navigation:navigation-fragment:2.2.2'
-    implementation 'androidx.navigation:navigation-ui:2.2.2'
-    implementation 'androidx.navigation:navigation-fragment-ktx:2.2.2'
-    implementation 'androidx.navigation:navigation-ui-ktx:2.2.2'
+    implementation 'androidx.navigation:navigation-fragment:2.3.0'
+    implementation 'androidx.navigation:navigation-ui:2.3.0'
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.3.0'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.3.0'
 
     // Recyclerview
     def recyclerview_version = "1.0.0"
