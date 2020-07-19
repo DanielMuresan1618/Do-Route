@@ -60,7 +60,6 @@ import com.google.maps.model.DirectionsResult
 import com.mancj.materialsearchbar.MaterialSearchBar
 import com.mancj.materialsearchbar.MaterialSearchBar.OnSearchActionListener
 import com.mancj.materialsearchbar.adapter.SuggestionsAdapter
-import kotlinx.android.synthetic.main.create_task_wizard.*
 import kotlinx.android.synthetic.main.create_task_wizard.view.*
 import java.util.*
 import java.util.UUID.randomUUID
@@ -229,7 +228,7 @@ class MapsFragment : Fragment(),
 
     private fun onMapLongClick(latLng: LatLng) {
         val now = Calendar.getInstance(Locale.getDefault())
-        val builder = AlertDialog.Builder(activity);
+        val builder = AlertDialog.Builder(activity)
         val inflater = layoutInflater
         val view = inflater.inflate(R.layout.create_task_wizard, null)
 //        Populate a random field just to see whether it works
@@ -273,10 +272,19 @@ class MapsFragment : Fragment(),
             .setIcon(R.drawable.ic_schedule)
             .setView(view)
             .setCancelable(true)
-            .setPositiveButton("Submit") { iDialog, which ->
+            .setPositiveButton("Submit") { _, _ ->
                 val title = view.wizard_task_title.text.toString()
                 val description = view.wizard_task_description.text.toString()
-                val task = TaskModel(randomUUID().toString(), title, description, dueDate,latLng,TaskStates.PENDING,false,false)
+                val task = TaskModel(
+                    randomUUID().toString(),
+                    title,
+                    description,
+                    dueDate,
+                    latLng,
+                    TaskStates.PENDING,
+                    false,
+                    false
+                )
                 addTask(task)
             }
         builder.create()
@@ -388,7 +396,7 @@ class MapsFragment : Fragment(),
         AlertDialog.Builder(activity)
             .setMessage("Do you want to start a trip to this task?")
             .setCancelable(true)
-            .setPositiveButton("Yes") { dialog, id ->
+            .setPositiveButton("Yes") { dialog, _ ->
 
                 val task = taskViewModel.getTaskByLocation(marker.position)
                 if (!task.tripActive) {
@@ -404,7 +412,7 @@ class MapsFragment : Fragment(),
                 }
                 dialog.dismiss()
             }
-            .setNegativeButton("No") { dialog, id -> dialog.cancel() }
+            .setNegativeButton("No") { dialog, _ -> dialog.cancel() }
             .create()
             .show()
     }

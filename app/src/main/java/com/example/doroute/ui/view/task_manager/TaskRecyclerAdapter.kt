@@ -93,7 +93,7 @@ class TaskRecyclerAdapter(
                 }
             })
             itemView.task_due_date.setOnClickListener(this::setDueDate)
-            itemView.taskCheckbox.setOnClickListener { view ->
+            itemView.taskCheckbox.setOnClickListener { _ ->
                 tasks[adapterPosition].checkboxChecked = !tasks[adapterPosition].checkboxChecked
                 onUpdate(tasks[adapterPosition]) //onUpdate created a lot of problems...
             }
